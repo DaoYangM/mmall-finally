@@ -9,10 +9,12 @@ import top.daoyang.demo.exception.GenericException;
 import top.daoyang.demo.exception.UserNotFoundException;
 import top.daoyang.demo.exception.ValidationException;
 import top.daoyang.demo.payload.ServerResponse;
+import top.daoyang.demo.payload.request.UserPasswordUpdateRequest;
 import top.daoyang.demo.security.UserPrincipal;
 import top.daoyang.demo.service.UserService;
 import top.daoyang.demo.utils.RepxUtils;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -22,6 +24,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AuthController authController;
+
     @GetMapping("/me")
     public ServerResponse me(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ServerResponse.createBySuccess(Optional.of(userService.findUserById(userPrincipal.getId()))
@@ -30,8 +35,14 @@ public class UserController {
 
     @GetMapping("/exist/username/{username}")
     public ServerResponse checkUsername(@PathVariable String username) {
-        return StringUtils.hasText(username) ? ServerResponse.createBySuccess(userService.checkUsername(username)) :
-         ServerResponse.createByErrorMessage("Username can't be empty");
+        if (StringUtils.hasText(username))
+            if (userService.checkUsername(username)) {
+                throw new GenericException(ExceptionEnum.USERNAME_EXISTED);
+            } else {
+                return ServerResponse.createBySuccess();
+            }
+        else
+            return ServerResponse.createByErrorMessage("Username can't be empty");
     }
 
 
@@ -47,11 +58,28 @@ public class UserController {
 
     @GetMapping("/exist/phone/{phone}")
     public ServerResponse checkPhone(@PathVariable String phone) {
-        if (StringUtils.hasText(phone))
-            if (RepxUtils.checkPhone(phone))
-                return ServerResponse.createBySuccess(userService.checkPhone(phone));
-            else
-                throw new ValidationException(ExceptionEnum.VALIDATE_PHONE);
-        throw new GenericException(ExceptionEnum.EMPTY_PHONE);
+        if (StringUtils.hasText(phone) && RepxUtils.checkPhone(phone))
+            if (userService.checkPhone(phone)) {
+                throw new GenericException(ExceptionEnum.PHONE_EXISTED);
+            } else {
+                return ServerResponse.createBySuccess();
+            }
+        else
+            return ServerResponse.createByErrorMessage("Phone number can't be empty or syntax error");
+    }
+
+    @PostMapping("/me/sms")
+    public ServerResponse msSms(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        return authController.sendSms(userService.findUserById(userPrincipal.getId()).getPhone());
+    }
+
+    @PutMapping("/me/password")
+    public ServerResponse updatePassword(@Valid @RequestBody UserPasswordUpdateRequest userPasswordUpdateRequest,
+                                         @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        return userService.updatePassword(userPasswordUpdateRequest, userService.findUserById(userPrincipal.getId())) ?
+                ServerResponse.createBySuccessMessage("Updating password success"):
+                ServerResponse.createByErrorMessage("Updating password failed");
     }
 }

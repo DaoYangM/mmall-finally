@@ -1,6 +1,7 @@
 package top.daoyang.demo.service;
 
 import top.daoyang.demo.entity.User;
+import top.daoyang.demo.payload.request.UserPasswordUpdateRequest;
 
 public interface UserService {
 
@@ -13,4 +14,6 @@ public interface UserService {
     boolean checkEmail(String email);
 
     boolean checkPhone(String phone);
+
+    boolean updatePassword(UserPasswordUpdateRequest userPasswordUpdateRequest, User user);
 }

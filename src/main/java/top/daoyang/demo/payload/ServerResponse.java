@@ -52,7 +52,7 @@ public class ServerResponse<T> implements Serializable {
 
 
     public static <T> ServerResponse<T> createBySuccess() {
-        return new ServerResponse<T>(HttpStatus.OK.value());
+        return new ServerResponse<T>(HttpStatus.OK.value(), "success");
     }
 
     public static <T> ServerResponse<T> createBySuccess(T data) {
