@@ -1,8 +1,7 @@
-package top.daoyang.demo.controller;
+package top.daoyang.demo.controller.portal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.HttpRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,7 +16,6 @@ import top.daoyang.demo.security.JwtTokenProvider;
 import top.daoyang.demo.service.AuthService;
 import top.daoyang.demo.utils.RepxUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController

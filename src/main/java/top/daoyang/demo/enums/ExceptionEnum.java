@@ -20,9 +20,13 @@ public enum  ExceptionEnum {
     VALIDATE_PHONE("Incorrect phone number format", 402),
 
     SMS_CODE_INTERVAL_LESS_THAN_1_MINUTE("Sms smsCode interval is less than 1 minute", 501),
-    SMS_CODE_DOES_NOT_MATCH("Sms smsCode doesn't match", 502);
+    SMS_CODE_DOES_NOT_MATCH("Sms smsCode doesn't match", 502),
 
+    CATEGORY_EXISTED("Category has already existed", 601),
+    CATEGORY_DOES_NOT_EXIST("Category doesn't exist", 602),
+    CATEGORY_UPDATE_ERROR("Category update error", 603),
 
+    CATEGORY_CREATE_ERROR("Category create error", 604);
     private String msg;
     private int code;
 
