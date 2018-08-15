@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import top.daoyang.demo.payload.ServerResponse;
 
 @Slf4j
-@RestControllerAdvice(basePackages = {"top.daoyang.demo.controller", "top.daoyang.demo.utils"})
+@RestControllerAdvice(basePackages = {"top.daoyang.demo.controller", "top.daoyang.demo.util"})
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(GenericException.class)

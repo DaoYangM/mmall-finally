@@ -1,4 +1,4 @@
-package top.daoyang.demo.utils;
+package top.daoyang.demo.util;
 
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;

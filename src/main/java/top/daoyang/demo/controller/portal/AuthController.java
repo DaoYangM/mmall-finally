@@ -14,7 +14,7 @@ import top.daoyang.demo.payload.request.JwtAuthenticationRequest;
 import top.daoyang.demo.payload.request.RegisterRequest;
 import top.daoyang.demo.security.JwtTokenProvider;
 import top.daoyang.demo.service.AuthService;
-import top.daoyang.demo.utils.RepxUtils;
+import top.daoyang.demo.util.RepxUtils;
 
 import javax.validation.Valid;
 

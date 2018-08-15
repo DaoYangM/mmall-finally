@@ -3,20 +3,18 @@ package top.daoyang.demo.service.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import top.daoyang.demo.entity.Category;
 import top.daoyang.demo.enums.ExceptionEnum;
 import top.daoyang.demo.exception.CategoryException;
 import top.daoyang.demo.exception.CategoryExistedException;
-import top.daoyang.demo.exception.GenericException;
 import top.daoyang.demo.mapper.CategoryMapper;
 import top.daoyang.demo.payload.request.CategoryCreateRequest;
 import top.daoyang.demo.service.ManageCategoryService;
-import top.daoyang.demo.utils.TreeCategory;
+import top.daoyang.demo.util.TreeCategory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class ManageCategoryServiceImpl implements ManageCategoryService {
@@ -36,6 +34,7 @@ public class ManageCategoryServiceImpl implements ManageCategoryService {
     }
 
     @Override
+    @Transactional
     public Category createCategory(CategoryCreateRequest categoryCreateRequest) {
 
         if (categoryMapper.findCategoryNameCount(categoryCreateRequest.getName()) > 0) {
@@ -54,6 +53,7 @@ public class ManageCategoryServiceImpl implements ManageCategoryService {
     }
 
     @Override
+    @Transactional
     public Category updateCategory(CategoryCreateRequest categoryCreateRequest, Integer categoryId) {
 
         Category category = Optional.of(categoryMapper.selectByPrimaryKey(categoryId)).

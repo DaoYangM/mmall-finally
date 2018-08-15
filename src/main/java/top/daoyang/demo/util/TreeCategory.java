@@ -1,4 +1,4 @@
-package top.daoyang.demo.utils;
+package top.daoyang.demo.util;
 
 import lombok.Getter;
 import lombok.Setter;

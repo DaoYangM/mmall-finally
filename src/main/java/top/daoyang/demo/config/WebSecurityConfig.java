@@ -1,4 +1,4 @@
-package top.daoyang.demo.security;
+package top.daoyang.demo.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -15,6 +15,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import top.daoyang.demo.security.JwtAuthenticationFilter;
+import top.daoyang.demo.security.UnAuthenticationEntryPoint;
+import top.daoyang.demo.security.UserPrincipal;
 import top.daoyang.demo.service.UserService;
 import java.util.Optional;
 
@@ -62,6 +65,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.js")
                 .permitAll()
                 .antMatchers("/auth/login", "/auth/sms",  "/auth/register", "/user/exist/**")
+                    .permitAll()
+                .antMatchers("/products/**")
                     .permitAll()
                 .antMatchers("/user/**").authenticated()
                 .anyRequest()

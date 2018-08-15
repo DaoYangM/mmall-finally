@@ -12,7 +12,7 @@ import top.daoyang.demo.payload.ServerResponse;
 import top.daoyang.demo.payload.request.UserPasswordUpdateRequest;
 import top.daoyang.demo.security.UserPrincipal;
 import top.daoyang.demo.service.UserService;
-import top.daoyang.demo.utils.RepxUtils;
+import top.daoyang.demo.util.RepxUtils;
 
 import javax.validation.Valid;
 import java.util.Optional;

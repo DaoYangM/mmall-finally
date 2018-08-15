@@ -14,7 +14,7 @@ import top.daoyang.demo.exception.SmsException;
 import top.daoyang.demo.exception.UserRegisterException;
 import top.daoyang.demo.mapper.UserMapper;
 import top.daoyang.demo.service.AuthService;
-import top.daoyang.demo.utils.SmsSenderUtils;
+import top.daoyang.demo.util.SmsSenderUtils;
 import top.daoyang.demo.payload.request.RegisterRequest;
 
 import java.util.concurrent.TimeUnit;

@@ -1,4 +1,4 @@
-package top.daoyang.demo.utils;
+package top.daoyang.demo.util;
 
 import com.aliyuncs.exceptions.ClientException;
 import org.junit.Test;
@@ -9,8 +9,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

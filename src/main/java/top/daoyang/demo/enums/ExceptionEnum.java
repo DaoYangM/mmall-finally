@@ -25,8 +25,22 @@ public enum  ExceptionEnum {
     CATEGORY_EXISTED("Category has already existed", 601),
     CATEGORY_DOES_NOT_EXIST("Category doesn't exist", 602),
     CATEGORY_UPDATE_ERROR("Category update error", 603),
+    CATEGORY_CREATE_ERROR("Category create error", 604),
 
-    CATEGORY_CREATE_ERROR("Category create error", 604);
+    PRODUCT_DOES_NOT_EXIST("Product doesn't exist", 701),
+    PRODUCT_CREATE_ERROR("Product create error", 702),
+    PRODUCT_UPDATE_ERROR("Product update error", 703),
+    PRODUCT_SET_STATUS_ERROR("Product set status error", 704),
+    PRODUCT_OUT_OF_STOCK("Product Insufficient inventory", 705),
+
+    CART_CREATE_ERROR("Cart insert failure", 801),
+    CART_DOES_NOT_EXIST("Cart doesn't exist", 802) ,
+    CART_UPDATE_ERROR("Cart update error", 803),
+    CART_SELECT_ERROR("Cart select error", 804),
+    CART_UNSELECTED_ERROR("Cart unselected error", 805),
+    CART_SELECT_ALL_ERROR("Cart select all error", 806),
+    CART_UNSELECTED_ALL_ERROR("Cart unselected all error", 807);
+
     private String msg;
     private int code;
 
