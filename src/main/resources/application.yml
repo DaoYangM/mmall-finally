@@ -4,10 +4,20 @@ spring:
     username: root
     password: yedeyang
     driver-class-name: com.mysql.jdbc.Driver
+
   redis:
     host: 101.132.181.196
 #    password: yedeyang
     port: 6379
+
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: true
+
+logging:
+  level:
+      top.daoyang.demo.mapper: DEBUG
 
 app:
   jwtSecret:

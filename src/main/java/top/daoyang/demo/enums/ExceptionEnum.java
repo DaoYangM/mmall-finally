@@ -39,7 +39,12 @@ public enum  ExceptionEnum {
     CART_SELECT_ERROR("Cart select error", 804),
     CART_UNSELECTED_ERROR("Cart unselected error", 805),
     CART_SELECT_ALL_ERROR("Cart select all error", 806),
-    CART_UNSELECTED_ALL_ERROR("Cart unselected all error", 807);
+    CART_UNSELECTED_ALL_ERROR("Cart unselected all error", 807),
+
+    SHIPPING_CREATE_ERROR("Shipping create error", 1001),
+    SHIPPING_UPDATE_ERROR("Shipping update error", 1002),
+    SHIPPING_DELETE_ERROR("Shipping delete error", 1003),
+    SHIPPING_DOES_NOT_EXIST("Shipping doesn't exist", 1003);
 
     private String msg;
     private int code;
