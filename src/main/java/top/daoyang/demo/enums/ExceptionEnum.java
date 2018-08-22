@@ -32,6 +32,7 @@ public enum  ExceptionEnum {
     PRODUCT_UPDATE_ERROR("Product update error", 703),
     PRODUCT_SET_STATUS_ERROR("Product set status error", 704),
     PRODUCT_OUT_OF_STOCK("Product Insufficient inventory", 705),
+    PRODUCT_UPDATE_STOCK_ERROR("Product update staock error", 706),
 
     CART_CREATE_ERROR("Cart insert failure", 801),
     CART_DOES_NOT_EXIST("Cart doesn't exist", 802) ,
@@ -40,11 +41,25 @@ public enum  ExceptionEnum {
     CART_UNSELECTED_ERROR("Cart unselected error", 805),
     CART_SELECT_ALL_ERROR("Cart select all error", 806),
     CART_UNSELECTED_ALL_ERROR("Cart unselected all error", 807),
+    CART_IS_EMPTY("Cart is empty", 808),
+    CART_CLEAN_ERROR("Cart clean error", 809),
 
     SHIPPING_CREATE_ERROR("Shipping create error", 1001),
     SHIPPING_UPDATE_ERROR("Shipping update error", 1002),
     SHIPPING_DELETE_ERROR("Shipping delete error", 1003),
-    SHIPPING_DOES_NOT_EXIST("Shipping doesn't exist", 1003);
+    SHIPPING_DOES_NOT_EXIST("Shipping doesn't exist", 1003),
+
+    ORDER_DOES_NOT_EXIST("Order doesn't exist", 1101),
+    ORDER_CANCEL_ERROR("Order cancel error", 1102),
+    ORDER_HAS_BEEN_CANCELED("Order has been canceled", 1103),
+    ORDER_HAS_BEEN_PAID("Order has been paid", 1104),
+    ORDER_HAS_BEEN_CLOSED("Order has been closed", 1105),
+    ORDER_HAS_BEEN_SUCCESS("Order has been success", 1106),
+    ORDER_STATUS_ERROR("Order status error", 1107),
+    ORDER_STATUS_UPDATE_ERROR("Order status update error", 1108),
+
+    ALIPAY_REPEATED_CALL("Alipay repeated call", 1201),
+    ALIPAY_TRADE_STATUS_ERROR("Alipay trade status error", 1202);
 
     private String msg;
     private int code;

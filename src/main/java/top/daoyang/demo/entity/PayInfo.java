@@ -5,7 +5,7 @@ import java.util.Date;
 public class PayInfo {
     private Integer id;
 
-    private Integer userId;
+    private Long userId;
 
     private Long orderNo;
 
@@ -19,7 +19,7 @@ public class PayInfo {
 
     private Date updateTime;
 
-    public PayInfo(Integer id, Integer userId, Long orderNo, Integer payPlatform, String platformNumber, String platformStatus, Date createTime, Date updateTime) {
+    public PayInfo(Integer id, Long userId, Long orderNo, Integer payPlatform, String platformNumber, String platformStatus, Date createTime, Date updateTime) {
         this.id = id;
         this.userId = userId;
         this.orderNo = orderNo;
@@ -42,11 +42,11 @@ public class PayInfo {
         this.id = id;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

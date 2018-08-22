@@ -1,4 +1,4 @@
-package top.daoyang.demo.service;
+package top.daoyang.demo.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -13,6 +13,7 @@ import top.daoyang.demo.exception.ProductException;
 import top.daoyang.demo.mapper.CategoryMapper;
 import top.daoyang.demo.mapper.ProductMapper;
 import top.daoyang.demo.payload.request.ProductCreateRequest;
+import top.daoyang.demo.service.ProductService;
 
 import java.util.Arrays;
 import java.util.List;
