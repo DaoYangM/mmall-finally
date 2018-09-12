@@ -2,8 +2,10 @@ package top.daoyang.demo.service;
 
 import com.github.pagehelper.PageInfo;
 import top.daoyang.demo.entity.Product;
+import top.daoyang.demo.entity.ProductSpecifyPriceStock;
 import top.daoyang.demo.payload.reponse.ProductSpecifyResponse;
 import top.daoyang.demo.payload.request.ProductCreateRequest;
+import top.daoyang.demo.payload.request.ProductSpecifyPriceAndStockRequest;
 
 import java.util.List;
 
@@ -20,4 +22,6 @@ public interface ProductService {
     Product updateProduct(ProductCreateRequest productCreateRequest, Integer productId);
 
     List<ProductSpecifyResponse> getProductSpecify(Integer productId);
+
+    ProductSpecifyPriceStock getProductSpecifyPriceAndStock(ProductSpecifyPriceAndStockRequest productIdAndSpecifyIds);
 }

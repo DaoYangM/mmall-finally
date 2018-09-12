@@ -8,15 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import top.daoyang.demo.entity.Product;
 import top.daoyang.demo.entity.ProductSpecify;
+import top.daoyang.demo.entity.ProductSpecifyPriceStock;
 import top.daoyang.demo.enums.ExceptionEnum;
 import top.daoyang.demo.enums.ProductStatusEnum;
 import top.daoyang.demo.exception.ProductException;
-import top.daoyang.demo.mapper.CategoryMapper;
-import top.daoyang.demo.mapper.ProductMapper;
-import top.daoyang.demo.mapper.ProductSpecifyItemMapper;
-import top.daoyang.demo.mapper.ProductSpecifyMapper;
+import top.daoyang.demo.mapper.*;
 import top.daoyang.demo.payload.reponse.ProductSpecifyResponse;
 import top.daoyang.demo.payload.request.ProductCreateRequest;
+import top.daoyang.demo.payload.request.ProductSpecifyPriceAndStockRequest;
 import top.daoyang.demo.service.ProductService;
 
 import java.util.ArrayList;
@@ -39,6 +38,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductSpecifyItemMapper productSpecifyItemMapper;
+
+    @Autowired
+    private ProductSpecifyPriceStockMapper productSpecifyPriceStockMapper;
 
     @Override
     public PageInfo<Product> getProducts(int page, int size, Integer status) {
@@ -109,6 +111,13 @@ public class ProductServiceImpl implements ProductService {
         });
 
         return productSpecifyResponseList;
+    }
+
+    @Override
+    public ProductSpecifyPriceStock getProductSpecifyPriceAndStock(ProductSpecifyPriceAndStockRequest productIdAndSpecifyIds) {
+        Product product = findProductByProductId(productIdAndSpecifyIds.getProductId(), ProductStatusEnum.ON_SALE.getValue());
+
+        return productSpecifyPriceStockMapper.getProductSpecifyPriceAndStock(product.getId(), productIdAndSpecifyIds.getSpecifyIds());
     }
 
     private boolean checkAvailable(ProductCreateRequest productCreateRequest) {

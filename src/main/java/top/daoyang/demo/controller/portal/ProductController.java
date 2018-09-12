@@ -4,7 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.daoyang.demo.enums.ProductStatusEnum;
 import top.daoyang.demo.payload.ServerResponse;
+import top.daoyang.demo.payload.request.ProductSpecifyPriceAndStockRequest;
 import top.daoyang.demo.service.ProductService;
+
+import javax.annotation.MatchesPattern;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/products")
@@ -36,5 +40,10 @@ public class ProductController {
     public ServerResponse getProductSpecify(@PathVariable Integer productId) {
         return ServerResponse.createBySuccess(productService.getProductSpecify(productId));
 
+    }
+
+    @PostMapping("/specify/pas")
+    public ServerResponse getProductSpecifyPriceAndStock(@Valid @RequestBody ProductSpecifyPriceAndStockRequest productIdAndSpecifyIds) {
+        return ServerResponse.createBySuccess(productService.getProductSpecifyPriceAndStock(productIdAndSpecifyIds));
     }
 }
