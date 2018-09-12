@@ -2,6 +2,7 @@ package top.daoyang.demo.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class Product {
     private Integer id;
@@ -28,7 +29,11 @@ public class Product {
 
     private Date updateTime;
 
-    public Product(Integer id, Integer categoryId, String name, String subtitle, String mainImage, String subImages, String detail, BigDecimal price, Integer stock, Integer status, Date createTime, Date updateTime) {
+    private Integer buyCount;
+
+    private List<String> subImageList;
+
+    public Product(Integer id, Integer categoryId, String name, String subtitle, String mainImage, String subImages, String detail, BigDecimal price, Integer stock, Integer status, Date createTime, Date updateTime, Integer buyCount) {
         this.id = id;
         this.categoryId = categoryId;
         this.name = name;
@@ -41,6 +46,7 @@ public class Product {
         this.status = status;
         this.createTime = createTime;
         this.updateTime = updateTime;
+        this.buyCount = buyCount;
     }
 
     public Product() {
@@ -141,5 +147,21 @@ public class Product {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getBuyCount() {
+        return buyCount;
+    }
+
+    public void setBuyCount(Integer buyCount) {
+        this.buyCount = buyCount;
+    }
+
+    public List<String> getSubImageList() {
+        return subImageList;
+    }
+
+    public void setSubImageList(List<String> subImageList) {
+        this.subImageList = subImageList;
     }
 }

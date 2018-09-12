@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Slf4j
-@Component
+//@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired

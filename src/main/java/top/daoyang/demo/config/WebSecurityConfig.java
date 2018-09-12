@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import top.daoyang.demo.security.JwtAuthenticationFilter;
 import top.daoyang.demo.security.UnAuthenticationEntryPoint;
 import top.daoyang.demo.security.UserPrincipal;
+import top.daoyang.demo.security.WXAuthenticationFilter;
 import top.daoyang.demo.service.UserService;
 import java.util.Optional;
 
@@ -32,7 +33,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UnAuthenticationEntryPoint unAuthenticationEntryPoint;
 
     @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private WXAuthenticationFilter wxAuthenticationFilter;
+
+//    @Autowired
+//    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
@@ -66,13 +70,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/auth/login", "/auth/sms",  "/auth/register", "/user/exist/**")
                     .permitAll()
-                .antMatchers("/products/**", "/order/pay/**", "/order/alipay/notify")
+                .antMatchers("/products/**", "/order/pay/**", "/order/alipay/notify", "/wx/login", "/index")
                     .permitAll()
                 .antMatchers("/user/**").authenticated()
                 .anyRequest()
                     .authenticated()
                         .and()
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(wxAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
@@ -81,9 +85,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return s -> {
 
             Optional<top.daoyang.demo.entity.User> oUser = Optional.ofNullable(userService.findUserByUsername(s));
-            oUser.orElseThrow(() -> new UsernameNotFoundException("The email and password you entered did not match our records."));
+        oUser.orElseThrow(() -> new UsernameNotFoundException("The email and password you entered did not match our records."));
 
-            return UserPrincipal.create(oUser.get());
+        return UserPrincipal.create(oUser.get());
         };
     }
 

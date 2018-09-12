@@ -7,14 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import top.daoyang.demo.entity.Product;
+import top.daoyang.demo.entity.ProductSpecify;
 import top.daoyang.demo.enums.ExceptionEnum;
 import top.daoyang.demo.enums.ProductStatusEnum;
 import top.daoyang.demo.exception.ProductException;
 import top.daoyang.demo.mapper.CategoryMapper;
 import top.daoyang.demo.mapper.ProductMapper;
+import top.daoyang.demo.mapper.ProductSpecifyItemMapper;
+import top.daoyang.demo.mapper.ProductSpecifyMapper;
+import top.daoyang.demo.payload.reponse.ProductSpecifyResponse;
 import top.daoyang.demo.payload.request.ProductCreateRequest;
 import top.daoyang.demo.service.ProductService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +34,12 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CategoryMapper categoryMapper;
 
+    @Autowired
+    private ProductSpecifyMapper productSpecifyMapper;
+
+    @Autowired
+    private ProductSpecifyItemMapper productSpecifyItemMapper;
+
     @Override
     public PageInfo<Product> getProducts(int page, int size, Integer status) {
         PageHelper.startPage(page, size);
@@ -37,8 +48,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findProductByProductId(Integer productId, Integer status) {
-        return Optional.ofNullable(productMapper.findProductByProductId(productId, status))
+        Product product = Optional.ofNullable(productMapper.findProductByProductId(productId, status))
             .orElseThrow(() -> new ProductException(ExceptionEnum.PRODUCT_DOES_NOT_EXIST));
+        product.setSubImageList(Arrays.asList(product.getSubImages().split(",")));
+
+        return product;
     }
 
     @Override
@@ -77,6 +91,24 @@ public class ProductServiceImpl implements ProductService {
         if (productMapper.updateByPrimaryKeySelective(product) == 1)
             return product;
         throw new ProductException(ExceptionEnum.PRODUCT_UPDATE_ERROR);
+    }
+
+    @Override
+    public List<ProductSpecifyResponse> getProductSpecify(Integer productId) {
+        Product product = findProductByProductId(productId, ProductStatusEnum.ON_SALE.getValue());
+        List<ProductSpecifyResponse> productSpecifyResponseList = new ArrayList<>();
+
+        List<ProductSpecify> productSpecifyList = productSpecifyMapper.getSpecifyByProductId(product.getId());
+
+        productSpecifyList.forEach(productSpecify -> {
+            ProductSpecifyResponse productSpecifyResponse = new ProductSpecifyResponse();
+            productSpecifyResponse.setProductSpecify(productSpecify);
+            productSpecifyResponse.setProductSpecifyItemList(productSpecifyItemMapper.getProductSpecifyItemList(productSpecify.getId()));
+
+            productSpecifyResponseList.add(productSpecifyResponse);
+        });
+
+        return productSpecifyResponseList;
     }
 
     private boolean checkAvailable(ProductCreateRequest productCreateRequest) {
