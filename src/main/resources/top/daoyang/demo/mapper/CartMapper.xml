@@ -8,12 +8,13 @@
       <arg column="product_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="quantity" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="checked" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="specify_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, product_id, quantity, checked, create_time, update_time
+    id, user_id, product_id, quantity, checked, specify_id, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -28,10 +29,10 @@
 
   <insert id="insert" parameterType="top.daoyang.demo.entity.Cart" >
     insert into mmall_cart (id, user_id, product_id, 
-      quantity, checked, create_time, 
+      quantity, checked, specify_id, create_time,
       update_time)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{productId,jdbcType=INTEGER},
-      #{quantity,jdbcType=INTEGER}, #{checked,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{quantity,jdbcType=INTEGER}, #{checked,jdbcType=INTEGER}, #{specifyId,jdbcType=INTEGER},#{createTime,jdbcType=TIMESTAMP},
       #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="top.daoyang.demo.entity.Cart" >
@@ -51,6 +52,9 @@
       </if>
       <if test="checked != null" >
         checked,
+      </if>
+      <if test="specifyId != null">
+        specify_id,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -75,6 +79,9 @@
       <if test="checked != null" >
         #{checked,jdbcType=INTEGER},
       </if>
+      <if test="specifyId != null">
+        #{specifyId, jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -98,6 +105,9 @@
       <if test="checked != null" >
         checked = #{checked,jdbcType=INTEGER},
       </if>
+      <if test="specifyId != null">
+        specify_id = #{specifyId, jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -113,6 +123,7 @@
       product_id = #{productId,jdbcType=INTEGER},
       quantity = #{quantity,jdbcType=INTEGER},
       checked = #{checked,jdbcType=INTEGER},
+      specify_id = #{specifyId, jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}

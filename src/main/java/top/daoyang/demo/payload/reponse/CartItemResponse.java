@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -31,6 +32,10 @@ public class CartItemResponse {
     private Integer productStock;
 
     private Integer productChecked;
+
+    private Integer specifyId;
+
+    private List<String> specifyDescItems;
 
     private String limitQuantity;
 

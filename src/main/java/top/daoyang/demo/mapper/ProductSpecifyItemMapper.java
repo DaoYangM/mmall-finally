@@ -9,4 +9,7 @@ public interface ProductSpecifyItemMapper {
 
     @Select("SELECT * FROM mmall_product_specify_item WHERE specify_id = #{specifyId}")
     List<ProductSpecifyItem> getProductSpecifyItemList(Integer specifyId);
+
+    @Select("SELECT * FROM mmall_product_specify_item WHERE id = #{id}")
+    ProductSpecifyItem getProductSpecifyItemById(Integer id);
 }

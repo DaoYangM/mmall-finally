@@ -43,6 +43,7 @@ public enum  ExceptionEnum {
     CART_UNSELECTED_ALL_ERROR("Cart unselected all error", 807),
     CART_IS_EMPTY("Cart is empty", 808),
     CART_CLEAN_ERROR("Cart clean error", 809),
+    CART_SPECIFY_ID_DOES_NOT_EXIST("Cart specifyId doesn't exist", 810),
 
     SHIPPING_CREATE_ERROR("Shipping create error", 1001),
     SHIPPING_UPDATE_ERROR("Shipping update error", 1002),

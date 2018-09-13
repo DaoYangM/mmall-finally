@@ -13,16 +13,19 @@ public class Cart {
 
     private Integer checked;
 
+    private Integer specifyId;
+
     private Date createTime;
 
     private Date updateTime;
 
-    public Cart(Integer id, String userId, Integer productId, Integer quantity, Integer checked, Date createTime, Date updateTime) {
+    public Cart(Integer id, String userId, Integer productId, Integer quantity, Integer checked, Integer specifyId, Date createTime, Date updateTime) {
         this.id = id;
         this.userId = userId;
         this.productId = productId;
         this.quantity = quantity;
         this.checked = checked;
+        this.specifyId = specifyId;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
@@ -85,5 +88,13 @@ public class Cart {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getSpecifyId() {
+        return specifyId;
+    }
+
+    public void setSpecifyId(Integer specifyId) {
+        this.specifyId = specifyId;
     }
 }

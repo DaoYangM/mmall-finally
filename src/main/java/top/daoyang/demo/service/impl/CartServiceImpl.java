@@ -6,12 +6,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.daoyang.demo.entity.Cart;
 import top.daoyang.demo.entity.Product;
+import top.daoyang.demo.entity.ProductSpecifyItem;
+import top.daoyang.demo.entity.ProductSpecifyPriceStock;
 import top.daoyang.demo.enums.ExceptionEnum;
 import top.daoyang.demo.enums.ProductStatusEnum;
 import top.daoyang.demo.exception.CartException;
 import top.daoyang.demo.exception.ProductException;
 import top.daoyang.demo.mapper.CartMapper;
 import top.daoyang.demo.mapper.ProductMapper;
+import top.daoyang.demo.mapper.ProductSpecifyItemMapper;
+import top.daoyang.demo.mapper.ProductSpecifyPriceStockMapper;
 import top.daoyang.demo.payload.reponse.CartItemResponse;
 import top.daoyang.demo.payload.reponse.CartResponse;
 import top.daoyang.demo.payload.request.CartCreateRequest;
@@ -19,6 +23,7 @@ import top.daoyang.demo.service.CartService;
 import top.daoyang.demo.util.BigDecimalUtils;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,6 +38,12 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private ProductMapper productMapper;
 
+    @Autowired
+    private ProductSpecifyItemMapper productSpecifyItemMapper;
+
+    @Autowired
+    private ProductSpecifyPriceStockMapper productSpecifyPriceStockMapper;
+
     @Override
     public CartResponse getCartByUserId(String userId) {
         List<Cart> cartList = cartMapper.findByUserId(userId);
@@ -45,7 +56,9 @@ public class CartServiceImpl implements CartService {
             cartItemResponse.setId(cart.getId());
             cartItemResponse.setUserId(userId);
             cartItemResponse.setQuantity(cart.getQuantity());
-            assemblyProduct(cartItemResponse, cart.getProductId());
+
+            assemblyProduct(cartItemResponse, cart.getProductId(), cart.getSpecifyId());
+
             cartItemResponse.setProductTotalPrice(
                     BigDecimalUtils.mul(cartItemResponse.getQuantity(), cartItemResponse.getProductPrice().doubleValue()));
             cartTotalPrice[0] = cartTotalPrice[0].add(cartItemResponse.getProductTotalPrice());
@@ -155,17 +168,31 @@ public class CartServiceImpl implements CartService {
         return cartMapper.count(userId);
     }
 
-    private void assemblyProduct(CartItemResponse cartItemResponse, Integer productId) {
+    private void assemblyProduct(CartItemResponse cartItemResponse, Integer productId, Integer specifyId) {
         Product product = Optional.ofNullable(productMapper.findProductByProductId(productId, ProductStatusEnum.ON_SALE.getValue()))
                 .orElseThrow(() -> new ProductException(ExceptionEnum.PRODUCT_DOES_NOT_EXIST));
+        if (specifyId != null) {
+            ProductSpecifyPriceStock productSpecifyPriceStock = Optional.ofNullable(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(productId, specifyId))
+                    .orElseThrow(() -> new CartException(ExceptionEnum.CART_SPECIFY_ID_DOES_NOT_EXIST));
 
+            cartItemResponse.setSpecifyId(productSpecifyPriceStock.getId());
+            productSpecifyPriceStock.getSpecifyIds().split("");
+            cartItemResponse.setProductPrice(productSpecifyPriceStock.getPrice());
+            cartItemResponse.setProductStock(productSpecifyPriceStock.getStock());
+
+            List<String> ss = Arrays.stream(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(productId, specifyId).getSpecifyIds().split("")).map(item -> productSpecifyItemMapper.getProductSpecifyItemById(Integer.parseInt(item)).getDescription()).collect(Collectors.toList());
+            cartItemResponse.setSpecifyDescItems(ss);
+            product.setStock(productSpecifyPriceStock.getStock());
+        } else {
+            cartItemResponse.setProductPrice(product.getPrice());
+            cartItemResponse.setProductStock(product.getStock());
+
+        }
         cartItemResponse.setProductId(product.getId());
         cartItemResponse.setProductName(product.getName());
         cartItemResponse.setProductSubtitle(product.getSubtitle());
         cartItemResponse.setProductMainImage(product.getMainImage());
-        cartItemResponse.setProductPrice(product.getPrice());
         cartItemResponse.setProductStatus(product.getStatus());
-        cartItemResponse.setProductStock(product.getStock());
 
         if (product.getStock() < cartItemResponse.getQuantity())
         {
