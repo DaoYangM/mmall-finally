@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public class CartItemResponse {
     private Integer id;
 
-    private Long userId;
+    private String userId;
 
     private Integer productId;
 

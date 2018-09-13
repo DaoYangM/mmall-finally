@@ -8,7 +8,7 @@ public class Order {
 
     private Long orderNo;
 
-    private Long userId;
+    private String userId;
 
     private Integer shippingId;
 
@@ -32,7 +32,7 @@ public class Order {
 
     private Date updateTime;
 
-    public Order(Integer id, Long orderNo, Long userId, Integer shippingId, BigDecimal payment, Integer paymentType, Integer postage, Integer status, Date paymentTime, Date sendTime, Date endTime, Date closeTime, Date createTime, Date updateTime) {
+    public Order(Integer id, Long orderNo, String userId, Integer shippingId, BigDecimal payment, Integer paymentType, Integer postage, Integer status, Date paymentTime, Date sendTime, Date endTime, Date closeTime, Date createTime, Date updateTime) {
         this.id = id;
         this.orderNo = orderNo;
         this.userId = userId;
@@ -69,11 +69,11 @@ public class Order {
         this.orderNo = orderNo;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

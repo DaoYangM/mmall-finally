@@ -3,6 +3,7 @@ package top.daoyang.demo.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import top.daoyang.demo.security.JwtTokenProvider;
 import top.daoyang.demo.service.WxService;
 import top.daoyang.demo.util.MD5Utils;
 
@@ -15,11 +16,15 @@ public class WxServiceImpl implements WxService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     @Override
     public String wxLogin(Map<String, String> map) {
-        String md5 = MD5Utils.crypt(map.toString());
-
-        stringRedisTemplate.opsForHash().putAll(md5, map);
-        return md5;
+//        String md5 = MD5Utils.crypt(map.toString());
+//
+//        stringRedisTemplate.opsForHash().putAll(md5, map);
+        System.out.println(map.get("openid"));
+        return jwtTokenProvider.generateToken(map.get("openid"));
     }
 }

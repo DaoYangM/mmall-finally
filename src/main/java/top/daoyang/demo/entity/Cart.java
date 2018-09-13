@@ -5,7 +5,7 @@ import java.util.Date;
 public class Cart {
     private Integer id;
 
-    private Long userId;
+    private String userId;
 
     private Integer productId;
 
@@ -17,7 +17,7 @@ public class Cart {
 
     private Date updateTime;
 
-    public Cart(Integer id, Long userId, Integer productId, Integer quantity, Integer checked, Date createTime, Date updateTime) {
+    public Cart(Integer id, String userId, Integer productId, Integer quantity, Integer checked, Date createTime, Date updateTime) {
         this.id = id;
         this.userId = userId;
         this.productId = productId;
@@ -39,11 +39,11 @@ public class Cart {
         this.id = id;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

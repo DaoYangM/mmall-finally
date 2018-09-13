@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="top.daoyang.demo.entity.Shipping" >
     <constructor >
       <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="user_id" jdbcType="BIGINT" javaType="java.lang.Long" />
+      <arg column="user_id" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="receiver_name" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="receiver_phone" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="receiver_mobile" jdbcType="VARCHAR" javaType="java.lang.String" />
@@ -39,7 +39,7 @@
       receiver_city, receiver_district, receiver_address, 
       receiver_zip, create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{receiverName,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{receiverName,jdbcType=VARCHAR},
       #{receiverPhone,jdbcType=VARCHAR}, #{receiverMobile,jdbcType=VARCHAR}, #{receiverProvince,jdbcType=VARCHAR}, 
       #{receiverCity,jdbcType=VARCHAR}, #{receiverDistrict,jdbcType=VARCHAR}, #{receiverAddress,jdbcType=VARCHAR}, 
       #{receiverZip,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
@@ -90,7 +90,7 @@
         #{id,jdbcType=INTEGER},
       </if>
       <if test="userId != null" >
-        #{userId,jdbcType=BIGINT},
+        #{userId,jdbcType=VARCHAR},
       </if>
       <if test="receiverName != null" >
         #{receiverName,jdbcType=VARCHAR},
@@ -128,7 +128,7 @@
     update mmall_shipping
     <set >
       <if test="userId != null" >
-        user_id = #{userId,jdbcType=INTEGER},
+        user_id = #{userId,jdbcType=VARCHAR},
       </if>
       <if test="receiverName != null" >
         receiver_name = #{receiverName,jdbcType=VARCHAR},
@@ -165,7 +165,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="top.daoyang.demo.entity.Shipping" >
     update mmall_shipping
-    set user_id = #{userId,jdbcType=INTEGER},
+    set user_id = #{userId,jdbcType=VARCHAR},
       receiver_name = #{receiverName,jdbcType=VARCHAR},
       receiver_phone = #{receiverPhone,jdbcType=VARCHAR},
       receiver_mobile = #{receiverMobile,jdbcType=VARCHAR},
@@ -179,7 +179,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="findByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="findByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
     FROM mmall_shipping

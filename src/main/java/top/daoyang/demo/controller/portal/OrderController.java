@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import top.daoyang.demo.payload.ServerResponse;
-import top.daoyang.demo.security.UserPrincipal;
+import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.OrderService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,16 +27,16 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/{shippingId}")
-    public ServerResponse createOrder(@AuthenticationPrincipal UserPrincipal userPrincipal,
+    public ServerResponse createOrder(@AuthenticationPrincipal WXUserDetails userPrincipal,
                                       @PathVariable Integer shippingId) {
         return ServerResponse.createBySuccess(orderService.createOrder(userPrincipal.getId(), shippingId));
     }
     @GetMapping("/pay/{orderNo}")
     public void pay(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-//                    @AuthenticationPrincipal UserPrincipal userPrincipal,
+//                    @AuthenticationPrincipal WXUserDetails userPrincipal,
                     @PathVariable Long orderNo) throws IOException {
 
-        orderService.payOrder(httpRequest, httpResponse, 22L, orderNo);
+        orderService.payOrder(httpRequest, httpResponse, "22L", orderNo);
     }
 
     @PostMapping("/alipay/notify")
@@ -45,20 +45,20 @@ public class OrderController {
     }
 
     @GetMapping("/{orderNo}")
-    public ServerResponse getOrderByOrderNo(@AuthenticationPrincipal UserPrincipal userPrincipal,
+    public ServerResponse getOrderByOrderNo(@AuthenticationPrincipal WXUserDetails userPrincipal,
                                             @PathVariable Long orderNo) {
         return ServerResponse.createBySuccess(orderService.getOrderByOrderNo(userPrincipal.getId(), orderNo));
     }
 
     @GetMapping
-    public ServerResponse getOrderList(@AuthenticationPrincipal UserPrincipal userPrincipal,
+    public ServerResponse getOrderList(@AuthenticationPrincipal WXUserDetails userPrincipal,
                                        @RequestParam(value = "page", defaultValue = "0") Integer page,
                                        @RequestParam(value = "size", defaultValue = "10") Integer size) {
         return ServerResponse.createBySuccess(orderService.getOrderList(userPrincipal.getId(), page, size));
     }
 
     @PatchMapping("/cancel/{orderNo}")
-    public ServerResponse cancelOrder(@AuthenticationPrincipal UserPrincipal userPrincipal,
+    public ServerResponse cancelOrder(@AuthenticationPrincipal WXUserDetails userPrincipal,
                                       @PathVariable Long orderNo) {
         return ServerResponse.createBySuccess(orderService.cancelOrder(userPrincipal.getId(), orderNo));
     }

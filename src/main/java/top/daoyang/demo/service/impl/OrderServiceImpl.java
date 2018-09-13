@@ -78,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponse createOrder(Long userId, Integer shippingId) {
+    public OrderResponse createOrder(String userId, Integer shippingId) {
 
         Shipping shipping = shippingService.getShippingByShippingId(userId, shippingId);
 
@@ -145,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse getOrderByOrderNo(Long userId, Long orderNo) {
+    public OrderResponse getOrderByOrderNo(String userId, Long orderNo) {
         Order order = Optional.ofNullable(orderMapper.findOrderByUserIdAndOrderNo(userId, orderNo))
                 .orElseThrow(() -> new OrderException(ExceptionEnum.ORDER_DOES_NOT_EXIST));
 
@@ -174,7 +174,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageInfo<OrderResponse> getOrderList(Long userId, Integer page, Integer size) {
+    public PageInfo<OrderResponse> getOrderList(String userId, Integer page, Integer size) {
         PageHelper.startPage(page, size);
         PageInfo<Order> pageInfo = new PageInfo<>(orderMapper.findOrderListByUserId(userId));
 
@@ -183,7 +183,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public boolean cancelOrder(Long userId, Long orderNo) {
+    public boolean cancelOrder(String userId, Long orderNo) {
         Order order = Optional.ofNullable(orderMapper.findOrderByUserIdAndOrderNo(userId, orderNo))
                 .orElseThrow(() -> new OrderException(ExceptionEnum.ORDER_DOES_NOT_EXIST));
 
@@ -201,7 +201,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void payOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, Long userId, Long orderNo) throws IOException {
+    public void payOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, Long orderNo) throws IOException {
         Order order = Optional.ofNullable(orderMapper.findOrderByUserIdAndOrderNo(userId, orderNo))
                 .orElseThrow(() -> new OrderException(ExceptionEnum.ORDER_DOES_NOT_EXIST));
 
@@ -306,7 +306,7 @@ public class OrderServiceImpl implements OrderService {
         return currentTime + new Random().nextInt(100);
     }
 
-    private Order getOrderByOrderId(Long userId, Long orderNo) {
+    private Order getOrderByOrderId(String userId, Long orderNo) {
          return Optional.ofNullable(orderMapper.findOrderByUserIdAndOrderNo(userId, orderNo))
                 .orElseThrow(() -> new OrderException(ExceptionEnum.ORDER_DOES_NOT_EXIST));
     }

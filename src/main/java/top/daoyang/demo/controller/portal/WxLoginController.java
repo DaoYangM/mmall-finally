@@ -2,9 +2,7 @@ package top.daoyang.demo.controller.portal;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Splitter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +10,6 @@ import org.springframework.web.client.RestTemplate;
 import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.WxService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +40,6 @@ public class WxLoginController {
 
     @GetMapping("/info")
     public String info(@AuthenticationPrincipal WXUserDetails userDetails) {
-        return userDetails.getOpenId();
+        return userDetails.getId();
     }
 }

@@ -12,15 +12,15 @@ import java.text.ParseException;
 
 public interface OrderService {
 
-    OrderResponse createOrder(Long id, Integer shippingId);
+    OrderResponse createOrder(String id, Integer shippingId);
 
-    OrderResponse getOrderByOrderNo(Long userId, Long orderNo);
+    OrderResponse getOrderByOrderNo(String userId, Long orderNo);
 
-    PageInfo<OrderResponse> getOrderList(Long userId, Integer page, Integer size);
+    PageInfo<OrderResponse> getOrderList(String userId, Integer page, Integer size);
 
-    boolean cancelOrder(Long userId, Long orderNo);
+    boolean cancelOrder(String userId, Long orderNo);
 
-    void payOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, Long userId, Long orderNo) throws IOException;
+    void payOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, Long orderNo) throws IOException;
 
     String aliPayNotify(HttpServletRequest httpServletRequest) throws AlipayApiException, ParseException;
 }

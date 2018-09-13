@@ -18,13 +18,13 @@ public interface CartMapper {
 
     int updateByPrimaryKey(Cart record);
 
-    List<Cart> findByUserId(Long userId);
+    List<Cart> findByUserId(String userId);
 
-    Cart findByUserIdAndProductId(@Param("userId") Long userId,
+    Cart findByUserIdAndProductId(@Param("userId") String userId,
                                   @Param("productId") Integer productId);
 
-    int deleteByUserIdAndProductId(@Param("userId") Long userId,
+    int deleteByUserIdAndProductId(@Param("userId") String userId,
                                    @Param("productId") Integer productId);
 
-    Integer count(Long userId);
+    Integer count(String userId);
 }

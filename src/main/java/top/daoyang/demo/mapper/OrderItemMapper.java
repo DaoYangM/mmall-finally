@@ -18,6 +18,6 @@ public interface OrderItemMapper {
 
     int updateByPrimaryKey(OrderItem record);
 
-    List<OrderItem> findOrderItemListByUserIdANDOrderNo(@Param("userId") Long userId,
+    List<OrderItem> findOrderItemListByUserIdANDOrderNo(@Param("userId") String userId,
                                                         @Param("orderNo") Long orderNo);
 }

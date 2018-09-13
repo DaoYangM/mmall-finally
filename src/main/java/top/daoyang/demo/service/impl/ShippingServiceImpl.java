@@ -22,13 +22,13 @@ public class ShippingServiceImpl implements ShippingService {
     private ShippingMapper shippingMapper;
 
     @Override
-    public PageInfo getShippingList(Long userId, Integer page, Integer size) {
+    public PageInfo getShippingList(String userId, Integer page, Integer size) {
         PageHelper.startPage(page, size);
         return PageInfo.of(shippingMapper.findByUserId(userId));
     }
 
     @Override
-    public Shipping createShipping(Long userId, ShippingCreateRequest shippingCreateRequest) {
+    public Shipping createShipping(String userId, ShippingCreateRequest shippingCreateRequest) {
         Shipping shipping = new Shipping();
         BeanUtils.copyProperties(shippingCreateRequest, shipping);
 
@@ -42,19 +42,19 @@ public class ShippingServiceImpl implements ShippingService {
     }
 
     @Override
-    public Shipping getShippingByShippingId(Long userId, Integer shippingId) {
+    public Shipping getShippingByShippingId(String userId, Integer shippingId) {
         return Optional.ofNullable(shippingMapper.findShippingByUserId(userId, shippingId))
                 .orElseThrow(() -> new ShippingException(ExceptionEnum.SHIPPING_DOES_NOT_EXIST));
     }
 
     @Override
-    public boolean deleteShippingByShippingId(Long userId, Integer shippingId) {
+    public boolean deleteShippingByShippingId(String userId, Integer shippingId) {
 
         return shippingMapper.deleteByShippingIdAndUserId(userId, shippingId) == 1;
     }
 
     @Override
-    public Shipping patchShippingByShippingId(Long userId, Integer shippingId, ShippingCreateRequest shippingCreateRequest) {
+    public Shipping patchShippingByShippingId(String userId, Integer shippingId, ShippingCreateRequest shippingCreateRequest) {
         Shipping shipping = getShippingByShippingId(userId, shippingId);
 
         BeanUtils.copyProperties(shippingCreateRequest, shipping);

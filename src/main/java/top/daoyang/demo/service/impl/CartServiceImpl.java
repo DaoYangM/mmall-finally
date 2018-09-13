@@ -34,7 +34,7 @@ public class CartServiceImpl implements CartService {
     private ProductMapper productMapper;
 
     @Override
-    public CartResponse getCartByUserId(Long userId) {
+    public CartResponse getCartByUserId(String userId) {
         List<Cart> cartList = cartMapper.findByUserId(userId);
         CartResponse cartResponse = new CartResponse();
         AtomicBoolean allChecked = new AtomicBoolean(true);
@@ -65,7 +65,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponse createCart(Long userId, CartCreateRequest cartCreateRequest) {
+    public CartResponse createCart(String userId, CartCreateRequest cartCreateRequest) {
         Cart cart = new Cart();
 
         Product product = Optional.ofNullable(productMapper.findProductByProductId(cartCreateRequest.getProductId(),
@@ -100,7 +100,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponse updateCart(Long userId, CartCreateRequest cartCreateRequest) {
+    public CartResponse updateCart(String userId, CartCreateRequest cartCreateRequest) {
 
         Product product = Optional.ofNullable(productMapper.findProductByProductId(cartCreateRequest.getProductId(),
                 ProductStatusEnum.ON_SALE.getValue()))
@@ -119,14 +119,14 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponse deleteCart(Long userId, Integer productId) {
+    public CartResponse deleteCart(String userId, Integer productId) {
         cartMapper.deleteByUserIdAndProductId(userId, productId);
         return getCartByUserId(userId);
     }
 
     @Override
     @Transactional
-    public CartResponse selectCart(Long userId, Integer productId, Integer isChecked) {
+    public CartResponse selectCart(String userId, Integer productId, Integer isChecked) {
         Cart cart = Optional.ofNullable(cartMapper.findByUserIdAndProductId(userId, productId))
                 .orElseThrow(() -> new CartException(ExceptionEnum.CART_DOES_NOT_EXIST));
 
@@ -139,7 +139,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponse selectAllCart(Long userId, Integer isChecked) {
+    public CartResponse selectAllCart(String userId, Integer isChecked) {
         List<Cart> cartList = cartMapper.findByUserId(userId);
         cartList.stream().forEach(cart -> {
             cart.setChecked(isChecked);
@@ -151,7 +151,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Integer countOfCart(Long userId) {
+    public Integer countOfCart(String userId) {
         return cartMapper.count(userId);
     }
 

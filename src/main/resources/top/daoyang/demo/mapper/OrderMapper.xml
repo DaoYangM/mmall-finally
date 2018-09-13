@@ -5,7 +5,7 @@
     <constructor >
       <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="order_no" jdbcType="BIGINT" javaType="java.lang.Long" />
-      <arg column="user_id" jdbcType="BIGINT" javaType="java.lang.Long" />
+      <arg column="user_id" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="shipping_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="payment" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
       <arg column="payment_type" jdbcType="INTEGER" javaType="java.lang.Integer" />
@@ -100,7 +100,7 @@
         #{orderNo,jdbcType=BIGINT},
       </if>
       <if test="userId != null" >
-        #{userId,jdbcType=BIGINT},
+        #{userId,jdbcType=VARCHAR},
       </if>
       <if test="shippingId != null" >
         #{shippingId,jdbcType=INTEGER},
@@ -144,7 +144,7 @@
         order_no = #{orderNo,jdbcType=BIGINT},
       </if>
       <if test="userId != null" >
-        user_id = #{userId,jdbcType=INTEGER},
+        user_id = #{userId,jdbcType=VARCHAR},
       </if>
       <if test="shippingId != null" >
         shipping_id = #{shippingId,jdbcType=INTEGER},
@@ -185,7 +185,7 @@
   <update id="updateByPrimaryKey" parameterType="top.daoyang.demo.entity.Order" >
     update mmall_order
     set order_no = #{orderNo,jdbcType=BIGINT},
-      user_id = #{userId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=VARCHAR},
       shipping_id = #{shippingId,jdbcType=INTEGER},
       payment = #{payment,jdbcType=DECIMAL},
       payment_type = #{paymentType,jdbcType=INTEGER},
@@ -205,7 +205,7 @@
     FROM mmall_order
     WHERE user_id = #{userId} AND order_no = #{orderNo}
   </select>
-  <select id="findOrderListByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="findOrderListByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
     FROM mmall_order

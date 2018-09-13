@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import top.daoyang.demo.enums.ExceptionEnum;
 import top.daoyang.demo.exception.WXException;
@@ -27,11 +28,14 @@ public class WXAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String user = request.getHeader("user");
-        if (user != null) {
-            String openid = Optional.ofNullable((String) stringRedisTemplate.opsForHash().get(user, "openid"))
+        String jwtToken = JwtAuthenticationFilter.getJwtFromRequest(request);
+        if (StringUtils.hasText(jwtToken) && jwtTokenProvider.validateToken(jwtToken)) {
+            String openid = Optional.ofNullable(jwtTokenProvider.getOpenIdFromJWT(jwtToken))
                     .orElseThrow(() -> new WXException(ExceptionEnum.WX_GET_OPENID_FAILURE));
 
             UserDetails wxUserDetails = new WXUserDetails(openid);

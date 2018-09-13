@@ -10,20 +10,20 @@ import java.util.Collection;
 
 public class WXUserDetails implements UserDetails {
 
-    private String openId;
+    private String id;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public WXUserDetails(String openId) {
-        this.openId = openId;
+    public WXUserDetails(String id) {
+        this.id = id;
         this.authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
-    public String getOpenId() {
-        return openId;
+    public String getId() {
+        return id;
     }
 
-    public void setOpenId(String openId) {
-        this.openId = openId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class WXUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return openId;
+        return id;
     }
 
     @Override
