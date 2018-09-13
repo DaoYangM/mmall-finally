@@ -2,6 +2,7 @@ package top.daoyang.demo.service;
 
 import com.github.pagehelper.PageInfo;
 import top.daoyang.demo.entity.Product;
+import top.daoyang.demo.entity.ProductParamter;
 import top.daoyang.demo.entity.ProductSpecifyPriceStock;
 import top.daoyang.demo.payload.reponse.ProductSpecifyResponse;
 import top.daoyang.demo.payload.request.ProductCreateRequest;
@@ -24,4 +25,6 @@ public interface ProductService {
     List<ProductSpecifyResponse> getProductSpecify(Integer productId);
 
     ProductSpecifyPriceStock getProductSpecifyPriceAndStock(ProductSpecifyPriceAndStockRequest productIdAndSpecifyIds);
+
+    List<ProductParamter> getProductParameterByProductId(Integer productId);
 }

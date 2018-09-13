@@ -7,7 +7,6 @@ import top.daoyang.demo.payload.ServerResponse;
 import top.daoyang.demo.payload.request.ProductSpecifyPriceAndStockRequest;
 import top.daoyang.demo.service.ProductService;
 
-import javax.annotation.MatchesPattern;
 import javax.validation.Valid;
 
 @RestController
@@ -45,5 +44,10 @@ public class ProductController {
     @PostMapping("/specify/pas")
     public ServerResponse getProductSpecifyPriceAndStock(@Valid @RequestBody ProductSpecifyPriceAndStockRequest productIdAndSpecifyIds) {
         return ServerResponse.createBySuccess(productService.getProductSpecifyPriceAndStock(productIdAndSpecifyIds));
+    }
+
+    @GetMapping("/{productId}/parameter")
+    public ServerResponse getProductParameter(@PathVariable Integer productId) {
+        return ServerResponse.createBySuccess(productService.getProductParameterByProductId(productId));
     }
 }

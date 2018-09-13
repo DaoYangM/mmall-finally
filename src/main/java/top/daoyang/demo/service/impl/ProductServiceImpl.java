@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import top.daoyang.demo.entity.Product;
+import top.daoyang.demo.entity.ProductParamter;
 import top.daoyang.demo.entity.ProductSpecify;
 import top.daoyang.demo.entity.ProductSpecifyPriceStock;
 import top.daoyang.demo.enums.ExceptionEnum;
@@ -41,6 +42,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductSpecifyPriceStockMapper productSpecifyPriceStockMapper;
+
+    @Autowired
+    private ProductParameterMapper productParameterMapper;
 
     @Override
     public PageInfo<Product> getProducts(int page, int size, Integer status) {
@@ -118,6 +122,13 @@ public class ProductServiceImpl implements ProductService {
         Product product = findProductByProductId(productIdAndSpecifyIds.getProductId(), ProductStatusEnum.ON_SALE.getValue());
 
         return productSpecifyPriceStockMapper.getProductSpecifyPriceAndStock(product.getId(), productIdAndSpecifyIds.getSpecifyIds());
+    }
+
+    @Override
+    public List<ProductParamter> getProductParameterByProductId(Integer productId) {
+        Product product = findProductByProductId(productId, ProductStatusEnum.ON_SALE.getValue());
+
+        return productParameterMapper.getProductParameterByProductId(product.getId());
     }
 
     private boolean checkAvailable(ProductCreateRequest productCreateRequest) {
