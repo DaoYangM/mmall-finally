@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.daoyang.demo.entity.Cart;
 import top.daoyang.demo.entity.Product;
-import top.daoyang.demo.entity.ProductSpecifyItem;
 import top.daoyang.demo.entity.ProductSpecifyPriceStock;
 import top.daoyang.demo.enums.ExceptionEnum;
 import top.daoyang.demo.enums.ProductStatusEnum;
@@ -58,11 +57,14 @@ public class CartServiceImpl implements CartService {
             cartItemResponse.setQuantity(cart.getQuantity());
 
             assemblyProduct(cartItemResponse, cart.getProductId(), cart.getSpecifyId());
-
-            cartItemResponse.setProductTotalPrice(
-                    BigDecimalUtils.mul(cartItemResponse.getQuantity(), cartItemResponse.getProductPrice().doubleValue()));
-            cartTotalPrice[0] = cartTotalPrice[0].add(cartItemResponse.getProductTotalPrice());
             cartItemResponse.setProductChecked(cart.getChecked());
+
+            if (cartItemResponse.getProductChecked().equals(ProductStatusEnum.CHECKED.getValue())) {
+                cartItemResponse.setProductTotalPrice(
+                        BigDecimalUtils.mul(cartItemResponse.getQuantity(), cartItemResponse.getProductPrice().doubleValue()));
+                cartTotalPrice[0] = cartTotalPrice[0].add(cartItemResponse.getProductTotalPrice());
+            }
+
 
             if (cartItemResponse.getProductChecked() != 1)
                 allChecked.set(false);
@@ -166,6 +168,13 @@ public class CartServiceImpl implements CartService {
     @Override
     public Integer countOfCart(String userId) {
         return cartMapper.count(userId);
+    }
+
+    @Override
+    public CartResponse deleteAllSelectCart(String id) {
+        cartMapper.deleteAllSelectCart(id);
+
+        return this.getCartByUserId(id);
     }
 
     private void assemblyProduct(CartItemResponse cartItemResponse, Integer productId, Integer specifyId) {

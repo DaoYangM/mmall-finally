@@ -17,4 +17,6 @@ public interface CartService {
     CartResponse selectAllCart(String userId, Integer isChecked);
 
     Integer countOfCart(String userId);
+
+    CartResponse deleteAllSelectCart(String id);
 }

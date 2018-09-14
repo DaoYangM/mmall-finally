@@ -40,19 +40,24 @@ public class CartController {
         return ServerResponse.createBySuccess(cartService.countOfCart(userPrincipal.getId()));
     }
 
+    @DeleteMapping
+    public ServerResponse deleteAllSelectCart(@AuthenticationPrincipal WXUserDetails userPrincipal) {
+        return ServerResponse.createBySuccess(cartService.deleteAllSelectCart(userPrincipal.getId()));
+    }
+
     @DeleteMapping("/{productId}")
     public ServerResponse deleteCart(@AuthenticationPrincipal WXUserDetails userPrincipal,
                                      @PathVariable Integer productId) {
         return ServerResponse.createBySuccess(cartService.deleteCart(userPrincipal.getId(), productId));
     }
 
-    @PatchMapping("/select/{productId}")
+    @PutMapping("/select/{productId}")
     public ServerResponse selectCart(@AuthenticationPrincipal WXUserDetails userPrincipal,
                                      @PathVariable Integer productId) {
         return ServerResponse.createBySuccess(cartService.selectCart(userPrincipal.getId(), productId, ProductStatusEnum.CHECKED.getValue()));
     }
 
-    @PatchMapping("/unselected/{productId}")
+    @PutMapping("/unselected/{productId}")
     public ServerResponse unselectedCart(@AuthenticationPrincipal WXUserDetails userPrincipal,
                                      @PathVariable Integer productId) {
         return ServerResponse.createBySuccess(cartService.selectCart(userPrincipal.getId(), productId, ProductStatusEnum.UNCHECKED.getValue()));
