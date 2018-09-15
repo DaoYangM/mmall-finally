@@ -62,7 +62,12 @@ public enum  ExceptionEnum {
     ALIPAY_REPEATED_CALL("Alipay repeated call", 1201),
     ALIPAY_TRADE_STATUS_ERROR("Alipay trade status error", 1202),
 
-    WX_GET_OPENID_FAILURE("WX get openid failure", 1301);
+    WX_GET_OPENID_FAILURE("WX get openid failure", 1301),
+
+    FAVORITE_HAS_EXISTED("Favorite has existed", 1400),
+    FAVORITE_CREATE_EXCEPTION("Favorite create exception", 1401),
+    FAVORITE_DOES_NOT_EXIST("Favorite doesn't exist", 1402);
+
 
     private String msg;
     private int code;

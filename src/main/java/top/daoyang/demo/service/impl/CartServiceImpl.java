@@ -195,7 +195,6 @@ public class CartServiceImpl implements CartService {
         } else {
             cartItemResponse.setProductPrice(product.getPrice());
             cartItemResponse.setProductStock(product.getStock());
-
         }
         cartItemResponse.setProductId(product.getId());
         cartItemResponse.setProductName(product.getName());

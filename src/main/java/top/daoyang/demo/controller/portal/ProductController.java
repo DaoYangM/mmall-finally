@@ -3,11 +3,16 @@ package top.daoyang.demo.controller.portal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.daoyang.demo.enums.ProductStatusEnum;
+import top.daoyang.demo.mapper.ProductSpecifyItemMapper;
+import top.daoyang.demo.mapper.ProductSpecifyPriceStockMapper;
 import top.daoyang.demo.payload.ServerResponse;
 import top.daoyang.demo.payload.request.ProductSpecifyPriceAndStockRequest;
 import top.daoyang.demo.service.ProductService;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
@@ -15,6 +20,12 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductSpecifyPriceStockMapper productSpecifyPriceStockMapper;
+
+    @Autowired
+    private ProductSpecifyItemMapper productSpecifyItemMapper;
 
     @GetMapping
     public ServerResponse getProducts(@RequestParam(value = "page", defaultValue = "0")  Integer page,
@@ -41,6 +52,14 @@ public class ProductController {
 
     }
 
+    @GetMapping("/{productId}/specify/{specifyId}")
+    public ServerResponse getProductSpecifyItemList(@PathVariable Integer productId,
+                                                    @PathVariable Integer specifyId) {
+        List<String> ss = Arrays.stream(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(productId, specifyId).getSpecifyIds().split(""))
+                .map(item -> productSpecifyItemMapper.getProductSpecifyItemById(Integer.parseInt(item)).getDescription()).collect(Collectors.toList());
+
+        return ServerResponse.createBySuccess(ss);
+    }
     @PostMapping("/specify/pas")
     public ServerResponse getProductSpecifyPriceAndStock(@Valid @RequestBody ProductSpecifyPriceAndStockRequest productIdAndSpecifyIds) {
         return ServerResponse.createBySuccess(productService.getProductSpecifyPriceAndStock(productIdAndSpecifyIds));
