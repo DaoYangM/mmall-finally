@@ -47,9 +47,9 @@ public class ProductServiceImpl implements ProductService {
     private ProductParameterMapper productParameterMapper;
 
     @Override
-    public PageInfo<Product> getProducts(int page, int size, Integer status) {
+    public PageInfo<Product> getProducts(int page, int size, Integer status, String sort) {
         PageHelper.startPage(page, size);
-        return new PageInfo<>(productMapper.findProduct(status));
+        return new PageInfo<>(productMapper.findProduct(status, sort));
     }
 
     @Override
@@ -62,11 +62,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PageInfo<Product> searchProduct(int page, int size, String q, Integer status) {
+    public PageInfo<Product> searchProduct(int page, int size, String q, Integer status, String sort) {
         if (!StringUtils.hasText(q))
             throw new ProductException(ExceptionEnum.PRODUCT_DOES_NOT_EXIST);
         PageHelper.startPage(page, size);
-        return new PageInfo<>(productMapper.searchByKeyword(q, status));
+        return new PageInfo<>(productMapper.searchByKeyword(q, status, sort));
     }
 
     @Override

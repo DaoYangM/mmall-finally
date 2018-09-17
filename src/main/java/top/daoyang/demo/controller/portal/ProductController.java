@@ -29,8 +29,9 @@ public class ProductController {
 
     @GetMapping
     public ServerResponse getProducts(@RequestParam(value = "page", defaultValue = "0")  Integer page,
-                                      @RequestParam(value = "size", defaultValue = "10")  Integer size) {
-        return ServerResponse.createBySuccess(productService.getProducts(page, size, ProductStatusEnum.ON_SALE.getValue()));
+                                      @RequestParam(value = "size", defaultValue = "10")  Integer size,
+                                      @RequestParam(value = "sort", defaultValue = "comprehensive") String sort) {
+        return ServerResponse.createBySuccess(productService.getProducts(page, size, ProductStatusEnum.ON_SALE.getValue(), sort));
     }
 
     @GetMapping("/{productId}")
@@ -41,9 +42,10 @@ public class ProductController {
     @GetMapping("/search")
     public ServerResponse searchProduct(@RequestParam(value = "page", defaultValue = "0")  Integer page,
                                         @RequestParam(value = "size", defaultValue = "10")  Integer size,
-                                        @RequestParam(value = "q") String q) {
+                                        @RequestParam(value = "q") String q,
+                                        @RequestParam(value = "sort", defaultValue = "comprehensive") String sort) {
 
-        return ServerResponse.createBySuccess(productService.searchProduct(page, size, q, ProductStatusEnum.ON_SALE.getValue()));
+        return ServerResponse.createBySuccess(productService.searchProduct(page, size, q, ProductStatusEnum.ON_SALE.getValue(), sort));
     }
 
     @GetMapping("/search/bar")

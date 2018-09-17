@@ -21,4 +21,14 @@ public class ProductMapperTest {
     public void findSearBarKeyWord() {
         log.info(productMapper.findSearBarKeyWord("冰箱", 1).toString());
     }
+
+    @Test
+    public void searchByKeyword() {
+        productMapper.searchByKeyword("iphone", 1, "price_asc");
+    }
+
+    @Test
+    public void findProduct() {
+        productMapper.findProduct(1, "price_asc");
+    }
 }

@@ -22,6 +22,22 @@
     id, category_id, name, subtitle, main_image, sub_images, detail, price, stock, status, 
     create_time, update_time, buy_count
   </sql>
+  <sql id="searchChoose">
+    <choose>
+      <when test='"price_asc".equals(sort)'>
+        ORDER BY price ASC
+      </when>
+      <when test='"price_desc".equals(sort)'>
+        ORDER BY price desc
+      </when>
+      <when test='"sale_first".equals(sort)'>
+        ORDER BY buy_count DESC, create_time DESC
+      </when>
+      <when test="sort != null ">
+        ORDER BY buy_count DESC, create_time ASC
+      </when>
+    </choose>
+  </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -178,7 +194,7 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="findProduct" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="findProduct" parameterType="map" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
     FROM
@@ -187,8 +203,8 @@
       <if test="status != null" >
         AND status = #{status}
       </if>
+      <include refid="searchChoose" />
     </where>
-
   </select>
 
   <select id="findProductByProductId" parameterType="map" resultMap="BaseResultMap" >
@@ -210,6 +226,7 @@
     <if test="status != null" >
       AND status = #{status}
     </if>
+    <include refid="searchChoose" />
   </select>
   <select id="findSearBarKeyWord" parameterType="map" resultType="java.lang.String">
     <bind name="pattern" value="'%' + _parameter.keyWord + '%'"/>

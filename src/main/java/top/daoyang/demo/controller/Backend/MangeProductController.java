@@ -18,7 +18,7 @@ public class MangeProductController {
     @GetMapping
     public ServerResponse getProducts(@RequestParam(value = "page", defaultValue = "0")  Integer page,
                                       @RequestParam(value = "size", defaultValue = "10")  Integer size) {
-        return ServerResponse.createBySuccess(productService.getProducts(page, size, null));
+        return ServerResponse.createBySuccess(productService.getProducts(page, size, null, ""));
     }
 
     @GetMapping("/{productId}")
@@ -29,9 +29,10 @@ public class MangeProductController {
     @GetMapping("/search")
     public ServerResponse searchProduct(@RequestParam(value = "page", defaultValue = "0")  Integer page,
                                         @RequestParam(value = "size", defaultValue = "10")  Integer size,
-                                        @RequestParam(value = "q") String q) {
+                                        @RequestParam(value = "q") String q,
+                                        @RequestParam(value = "sort") String sort) {
 
-        return ServerResponse.createBySuccess(productService.searchProduct(page, size, q, null));
+        return ServerResponse.createBySuccess(productService.searchProduct(page, size, q, null, sort));
     }
 
     @PostMapping()

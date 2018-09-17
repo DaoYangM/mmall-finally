@@ -18,13 +18,15 @@ public interface ProductMapper {
 
     int updateByPrimaryKey(Product record);
 
-    List<Product> findProduct(@Param("status") Integer status);
+    List<Product> findProduct(@Param("status") Integer status,
+                              @Param("sort") String sort);
 
     Product findProductByProductId(@Param(value = "productId")Integer productId,
                                    @Param(value = "status") Integer status);
 
     List<Product> searchByKeyword(@Param(value = "q") String q,
-                                  @Param(value = "status") Integer status);
+                                  @Param(value = "status") Integer status,
+                                  @Param(value = "sort") String sort);
 
     List<String> findSearBarKeyWord(@Param(value = "keyWord") String keyWord,
                                     @Param(value = "status") Integer status);

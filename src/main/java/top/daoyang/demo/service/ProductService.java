@@ -12,11 +12,11 @@ import java.util.List;
 
 public interface ProductService {
 
-    PageInfo<Product> getProducts(int page, int size, Integer status);
+    PageInfo<Product> getProducts(int page, int size, Integer status, String sort);
 
     Product findProductByProductId(Integer productId, Integer status);
 
-    PageInfo<Product> searchProduct(int page, int size, String q, Integer status);
+    PageInfo<Product> searchProduct(int page, int size, String q, Integer status, String sort);
 
     Product createProduct(ProductCreateRequest productCreateRequest);
 
