@@ -13,8 +13,10 @@ import top.daoyang.demo.payload.request.CategoryCreateRequest;
 import top.daoyang.demo.service.ManageCategoryService;
 import top.daoyang.demo.util.TreeCategory;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ManageCategoryServiceImpl implements ManageCategoryService {
@@ -78,6 +80,18 @@ public class ManageCategoryServiceImpl implements ManageCategoryService {
         deptChild(categoryId, treeCategory);
 
         return treeCategory;
+    }
+
+    @Override
+    public Set<Category> searchCategory(String q) {
+        Set<Category> categorySet = new HashSet<>();
+
+        categoryMapper.searchByName(q).forEach(category -> {
+            categorySet.add(category);
+            categorySet.addAll(this.findByParentId(category.getId()));
+        });
+
+        return categorySet;
     }
 
     private TreeCategory deptChild(Integer categoryId, TreeCategory treeCategoryList) {

@@ -27,4 +27,6 @@ public interface ProductService {
     ProductSpecifyPriceStock getProductSpecifyPriceAndStock(ProductSpecifyPriceAndStockRequest productIdAndSpecifyIds);
 
     List<ProductParamter> getProductParameterByProductId(Integer productId);
+
+    List<String> searchBarProduct(String q, int saleStatus);
 }

@@ -72,6 +72,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                 .antMatchers("/products/**", "/order/pay/**", "/order/alipay/notify", "/wx/login", "/index")
                     .permitAll()
+                .antMatchers("/category/**")
+                    .permitAll()
                 .antMatchers("/user/**").authenticated()
                 .anyRequest()
                     .authenticated()

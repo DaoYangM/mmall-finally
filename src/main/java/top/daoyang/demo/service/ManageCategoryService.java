@@ -5,6 +5,7 @@ import top.daoyang.demo.payload.request.CategoryCreateRequest;
 import top.daoyang.demo.util.TreeCategory;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ManageCategoryService {
 
@@ -19,4 +20,6 @@ public interface ManageCategoryService {
     List<Category> findChildParallelCategory(Integer categoryId);
 
     TreeCategory findChildDeptCategory(Integer categoryId);
+
+    Set<Category> searchCategory(String q);
 }

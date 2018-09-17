@@ -136,4 +136,9 @@
       FROM mmall_category
       WHERE parent_id = #{categoryId}
     </select>
+  <select id="searchByName" resultMap="BaseResultMap">
+    <bind name="pattern" value="'%' + _parameter.name + '%'" />
+    SELECT * FROM mmall_category
+    WHERE name LIKE #{pattern}
+  </select>
 </mapper>

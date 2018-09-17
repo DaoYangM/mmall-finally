@@ -89,6 +89,25 @@ public class Category {
 
     @Override
     public String toString() {
-        return this.id.toString();
+        return this.name;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        else {
+            if (obj instanceof Category) {
+                Category category = (Category) obj;
+
+                return category.id.equals(this.id);
+            }
+        }
+        return false;
     }
 }

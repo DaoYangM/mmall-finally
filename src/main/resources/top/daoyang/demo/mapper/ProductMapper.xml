@@ -206,7 +206,16 @@
     SELECT
     <include refid="Base_Column_List" />
     FROM mmall_product
-    WHERE name LIKE #{pattern}
+    WHERE name LIKE #{pattern} OR subtitle LIKE #{pattern}
+    <if test="status != null" >
+      AND status = #{status}
+    </if>
+  </select>
+  <select id="findSearBarKeyWord" parameterType="map" resultType="java.lang.String">
+    <bind name="pattern" value="'%' + _parameter.keyWord + '%'"/>
+    SELECT subtitle
+    FROM mmall_product
+    WHERE subtitle LIKE #{pattern}
     <if test="status != null" >
       AND status = #{status}
     </if>

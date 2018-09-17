@@ -25,4 +25,7 @@ public interface ProductMapper {
 
     List<Product> searchByKeyword(@Param(value = "q") String q,
                                   @Param(value = "status") Integer status);
+
+    List<String> findSearBarKeyWord(@Param(value = "keyWord") String keyWord,
+                                    @Param(value = "status") Integer status);
 }

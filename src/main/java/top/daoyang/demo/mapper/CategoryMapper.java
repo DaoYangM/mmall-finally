@@ -1,5 +1,6 @@
 package top.daoyang.demo.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import top.daoyang.demo.entity.Category;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface CategoryMapper {
     int findCategoryNameCount(String name);
 
     List<Category> findChildParallelCategoryByCategoryId(Integer categoryId);
+
+    List<Category> searchByName(@Param("name") String name);
 }

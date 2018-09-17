@@ -131,6 +131,11 @@ public class ProductServiceImpl implements ProductService {
         return productParameterMapper.getProductParameterByProductId(product.getId());
     }
 
+    @Override
+    public List<String> searchBarProduct(String q, int saleStatus) {
+        return productMapper.findSearBarKeyWord(q, saleStatus);
+    }
+
     private boolean checkAvailable(ProductCreateRequest productCreateRequest) {
         if (categoryMapper.selectByPrimaryKey(productCreateRequest.getCategoryId()) == null)
             throw new ProductException(ExceptionEnum.CATEGORY_DOES_NOT_EXIST);

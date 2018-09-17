@@ -46,6 +46,12 @@ public class ProductController {
         return ServerResponse.createBySuccess(productService.searchProduct(page, size, q, ProductStatusEnum.ON_SALE.getValue()));
     }
 
+    @GetMapping("/search/bar")
+    public ServerResponse searchProduct(@RequestParam(value = "q") String q) {
+
+        return ServerResponse.createBySuccess(productService.searchBarProduct(q, ProductStatusEnum.ON_SALE.getValue()));
+    }
+
     @GetMapping("/{productId}/specify")
     public ServerResponse getProductSpecify(@PathVariable Integer productId) {
         return ServerResponse.createBySuccess(productService.getProductSpecify(productId));
