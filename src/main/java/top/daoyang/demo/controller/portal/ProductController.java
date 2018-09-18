@@ -63,10 +63,7 @@ public class ProductController {
     @GetMapping("/{productId}/specify/{specifyId}")
     public ServerResponse getProductSpecifyItemList(@PathVariable Integer productId,
                                                     @PathVariable Integer specifyId) {
-        List<String> ss = Arrays.stream(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(productId, specifyId).getSpecifyIds().split(""))
-                .map(item -> productSpecifyItemMapper.getProductSpecifyItemById(Integer.parseInt(item)).getDescription()).collect(Collectors.toList());
-
-        return ServerResponse.createBySuccess(ss);
+        return ServerResponse.createBySuccess(productService.getProductSpecifyBySpecifyId(productId, specifyId));
     }
     @PostMapping("/specify/pas")
     public ServerResponse getProductSpecifyPriceAndStock(@Valid @RequestBody ProductSpecifyPriceAndStockRequest productIdAndSpecifyIds) {

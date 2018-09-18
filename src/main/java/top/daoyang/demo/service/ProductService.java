@@ -29,4 +29,6 @@ public interface ProductService {
     List<ProductParamter> getProductParameterByProductId(Integer productId);
 
     List<String> searchBarProduct(String q, int saleStatus);
+
+    List<String> getProductSpecifyBySpecifyId(Integer productId, Integer specifyId);
 }

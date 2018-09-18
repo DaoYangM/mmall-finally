@@ -136,6 +136,18 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.findSearBarKeyWord(q, saleStatus);
     }
 
+    @Override
+    public List<String> getProductSpecifyBySpecifyId(Integer productId, Integer specifyId) {
+        String splitStr = ",";
+        ProductSpecifyPriceStock productSpecifyPASBySpecifyId = productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(productId, specifyId);
+//        if (productSpecifyPASBySpecifyId != null && productSpecifyPASBySpecifyId.getSpecifyLength() > 1)
+//            splitStr = ",";
+        List<String> ss = Arrays.stream(productSpecifyPASBySpecifyId.getSpecifyIds().split(splitStr))
+                .map(item -> productSpecifyItemMapper.getProductSpecifyItemById(Integer.parseInt(item)).getDescription()).collect(Collectors.toList());
+
+        return ss;
+    }
+
     private boolean checkAvailable(ProductCreateRequest productCreateRequest) {
         if (categoryMapper.selectByPrimaryKey(productCreateRequest.getCategoryId()) == null)
             throw new ProductException(ExceptionEnum.CATEGORY_DOES_NOT_EXIST);
