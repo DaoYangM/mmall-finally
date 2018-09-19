@@ -11,7 +11,11 @@ public enum OrderStatusEnum {
     PAID(10, "已付款"),
     ORDER_SUCCESS(20, "订单完成"),
     ORDER_CLOSE(30, "订单关闭"),
-    ORDER_CANCEL(40, "订单取消");
+    ORDER_CANCEL(40, "订单取消"),
+    WAIT_DELIVERY(50, "代发货"),
+    WAIT_RECEIPT(60, "待收货"),
+    WAIT_COMMENT(70, "待评价");
+
 
     private int code;
 

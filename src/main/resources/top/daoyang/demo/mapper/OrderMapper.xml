@@ -205,11 +205,14 @@
     FROM mmall_order
     WHERE user_id = #{userId} AND order_no = #{orderNo}
   </select>
-  <select id="findOrderListByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="findOrderListByUserId" parameterType="map" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
     FROM mmall_order
     WHERE user_id = #{userId}
+    <if test="type != null">
+      AND status = #{type}
+    </if>
   </select>
   <select id="getAll" resultMap="BaseResultMap">
     SELECT

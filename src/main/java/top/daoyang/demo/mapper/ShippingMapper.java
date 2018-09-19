@@ -25,4 +25,11 @@ public interface ShippingMapper {
 
     Shipping findShippingByUserId(@Param("userId")String userId,
                                   @Param("shippingId")Integer shippingId);
+
+    Shipping findCheckShipping(String userId);
+
+    int changeAllUncheck(String userId);
+
+    int changeChecked(@Param("userId")String userId,
+                      @Param("shippingId")Integer id);
 }

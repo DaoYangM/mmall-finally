@@ -23,8 +23,11 @@ logging:
   level:
       top.daoyang.demo.mapper: DEBUG
 
-pagehelper:
-  default-count: false
+#pagehelper:
+#  default-count: false
+#  helperDialect: mysql
+#  reasonable: true
+#  supportMethodsArguments: true
 
 app:
   jwtSecret:

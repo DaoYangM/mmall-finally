@@ -12,7 +12,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.daoyang.demo.entity.*;
@@ -35,6 +34,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static top.daoyang.demo.enums.OrderStatusEnum.*;
@@ -153,6 +153,8 @@ public class OrderServiceImpl implements OrderService {
 
         BeanUtils.copyProperties(order, orderResponse);
 
+        AtomicReference<Integer> totalCount = new AtomicReference<>(0);
+
         List<OrderItem> orderItemList = orderItemMapper.findOrderItemListByUserIdANDOrderNo(userId, orderNo);
         orderItemList.forEach(orderItem -> {
             OrderResponse.OrderItem orderItemResponse = orderResponse.new OrderItem();
@@ -165,20 +167,44 @@ public class OrderServiceImpl implements OrderService {
             orderItemResponse.setTotalPrice(orderItem.getTotalPrice());
             orderItemResponse.setCreateTime(order.getCreateTime());
 
+            totalCount.updateAndGet(v -> v + orderItem.getQuantity());
+
             orderResponse.orderItems.add(orderItemResponse);
         });
 
-        orderResponse.setShipping(shippingService.getShippingByShippingId(userId, order.getShippingId()));
-
+//        orderResponse.setShipping(shippingService.getShippingByShippingId(userId, order.getShippingId()));
+        orderResponse.setTotalCount(totalCount.get());
         return orderResponse;
     }
 
     @Override
-    public PageInfo<OrderResponse> getOrderList(String userId, Integer page, Integer size) {
-        PageHelper.startPage(page, size);
-        PageInfo<Order> pageInfo = new PageInfo<>(orderMapper.findOrderListByUserId(userId));
+    public PageInfo getOrderList(String userId, Integer page, Integer size, String type) {
+        Integer payStatus;
 
-        return PageInfo.of(pageInfo.getList().stream().map(order -> getOrderByOrderNo(userId, order.getOrderNo())).collect(Collectors.toList()));
+        switch (type) {
+            case "wait_pay":
+                payStatus = OrderStatusEnum.NO_PAY.getCode();
+                break;
+            case "wait_delivery":
+                payStatus = OrderStatusEnum.WAIT_DELIVERY.getCode();
+                break;
+            case "wait_receipt":
+                payStatus = OrderStatusEnum.WAIT_RECEIPT.getCode();
+                break;
+            case "wait_comment":
+                payStatus = OrderStatusEnum.WAIT_COMMENT.getCode();
+                break;
+
+            default:
+                payStatus = null;
+        }
+        PageHelper.startPage(page, size);
+        List<Order> orderList = orderMapper.findOrderListByUserId(userId, payStatus);
+        PageInfo pageInfo = new PageInfo<>(orderList);
+        List<OrderResponse> orderResponseList = orderList.stream().map(order -> getOrderByOrderNo(userId, order.getOrderNo())).collect(Collectors.toList());
+        pageInfo.setList(orderResponseList);
+
+        return pageInfo;
     }
 
     @Override
@@ -218,6 +244,7 @@ public class OrderServiceImpl implements OrderService {
 
         AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipaydev.com/gateway.do", APP_ID, APP_PRIVATE_KEY, "json", "utf-8", ALIPAY_PUBLIC_KEY, "RSA2"); //获得初始化的AlipayClient
         AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();//创建API对应的request
+//        AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();
         alipayRequest.setReturnUrl("http://daoyang.natapp1.cc/order/alipay/notify");
         alipayRequest.setNotifyUrl(NOTIFY_URL + "/order/alipay/notify");//在公共参数中设置回跳和通知地址
         alipayRequest.setBizContent("{" +

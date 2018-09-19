@@ -27,5 +27,7 @@ public class ShippingCreateRequest {
     @NotBlank
     private String receiverAddress;
 
+    private Integer checked;
+
     private String receiverZip;
 }

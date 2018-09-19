@@ -23,11 +23,13 @@ public class Shipping {
 
     private String receiverZip;
 
+    private Integer checked;
+
     private Date createTime;
 
     private Date updateTime;
 
-    public Shipping(Integer id, String userId, String receiverName, String receiverPhone, String receiverMobile, String receiverProvince, String receiverCity, String receiverDistrict, String receiverAddress, String receiverZip, Date createTime, Date updateTime) {
+    public Shipping(Integer id, String userId, String receiverName, String receiverPhone, String receiverMobile, String receiverProvince, String receiverCity, String receiverDistrict, String receiverAddress, String receiverZip, Integer checked, Date createTime, Date updateTime) {
         this.id = id;
         this.userId = userId;
         this.receiverName = receiverName;
@@ -38,8 +40,17 @@ public class Shipping {
         this.receiverDistrict = receiverDistrict;
         this.receiverAddress = receiverAddress;
         this.receiverZip = receiverZip;
+        this.checked = checked;
         this.createTime = createTime;
         this.updateTime = updateTime;
+    }
+
+    public Integer getChecked() {
+        return checked;
+    }
+
+    public void setChecked(Integer checked) {
+        this.checked = checked;
     }
 
     public Shipping() {

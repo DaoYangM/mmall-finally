@@ -13,13 +13,14 @@
       <arg column="receiver_district" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="receiver_address" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="receiver_zip" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="checked" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_id, receiver_name, receiver_phone, receiver_mobile, receiver_province, receiver_city, 
-    receiver_district, receiver_address, receiver_zip, create_time, update_time
+    receiver_district, receiver_address, receiver_zip, checked ,create_time, update_time
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -78,6 +79,9 @@
       <if test="receiverZip != null" >
         receiver_zip,
       </if>
+      <if test="checked != null" >
+        checked,
+      </if>
       <if test="createTime != null" >
         create_time,
       </if>
@@ -115,6 +119,9 @@
       </if>
       <if test="receiverZip != null" >
         #{receiverZip,jdbcType=VARCHAR},
+      </if>
+      <if test="checked != null" >
+        #{checked,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -178,6 +185,17 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <update id="changeAllUncheck" parameterType="java.lang.String">
+    UPDATE mmall_shipping
+    SET checked = 0
+    WHERE user_id = #{userId}
+  </update>
+
+  <update id="changeChecked" parameterType="map">
+    UPDATE mmall_shipping
+    SET checked = 1
+    WHERE user_id = #{userId} AND id = #{shippingId}
+  </update>
 
   <select id="findByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
     SELECT
@@ -191,6 +209,13 @@
     FROM
     mmall_shipping
     WHERE user_id = #{userId} AND id = #{shippingId}
+  </select>
+  <select id="findCheckShipping" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM
+    mmall_shipping
+    WHERE user_id = #{userId} AND checked = 1
   </select>
 
   <delete id="deleteByShippingIdAndUserId" parameterType="map">

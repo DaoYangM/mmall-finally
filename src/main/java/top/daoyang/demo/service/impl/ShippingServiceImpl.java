@@ -24,7 +24,7 @@ public class ShippingServiceImpl implements ShippingService {
     @Override
     public PageInfo getShippingList(String userId, Integer page, Integer size) {
         PageHelper.startPage(page, size);
-        return PageInfo.of(shippingMapper.findByUserId(userId));
+        return new PageInfo(shippingMapper.findByUserId(userId));
     }
 
     @Override
@@ -62,5 +62,22 @@ public class ShippingServiceImpl implements ShippingService {
         if (shippingMapper.updateByPrimaryKeySelective(shipping) == 1)
             return shipping;
         throw new ShippingException(ExceptionEnum.SHIPPING_UPDATE_ERROR);
+    }
+
+    @Override
+    public Shipping getCheckShipping(String userId) {
+        return Optional.ofNullable(shippingMapper.findCheckShipping(userId)).orElse(null);
+    }
+
+    @Override
+    public PageInfo changeChecked(String userId, Integer shippingId) {
+        Shipping shipping = getShippingByShippingId(userId, shippingId);
+
+        shippingMapper.changeAllUncheck(userId);
+
+        if (shippingMapper.changeChecked(userId, shipping.getId()) == 1)
+            return getShippingList(userId, 1, 10);
+        else
+            throw new ShippingException(ExceptionEnum.SHIPPING_UPDATE_ERROR);
     }
 }

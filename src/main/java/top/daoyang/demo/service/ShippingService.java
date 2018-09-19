@@ -14,4 +14,8 @@ public interface ShippingService {
     boolean deleteShippingByShippingId(String userId, Integer shippingId);
 
     Shipping patchShippingByShippingId(String userId, Integer shippingId, ShippingCreateRequest shippingCreateRequest);
+
+    Shipping getCheckShipping(String userId);
+
+    PageInfo changeChecked(String userId, Integer shippingId);
 }

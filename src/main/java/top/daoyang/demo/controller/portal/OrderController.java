@@ -36,7 +36,7 @@ public class OrderController {
 //                    @AuthenticationPrincipal WXUserDetails userPrincipal,
                     @PathVariable Long orderNo) throws IOException {
 
-        orderService.payOrder(httpRequest, httpResponse, "22L", orderNo);
+        orderService.payOrder(httpRequest, httpResponse, "22", orderNo);
     }
 
     @PostMapping("/alipay/notify")
@@ -52,9 +52,10 @@ public class OrderController {
 
     @GetMapping
     public ServerResponse getOrderList(@AuthenticationPrincipal WXUserDetails userPrincipal,
-                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                       @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        return ServerResponse.createBySuccess(orderService.getOrderList(userPrincipal.getId(), page, size));
+                                       @RequestParam(value = "page", defaultValue = "1") Integer page,
+                                       @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                       @RequestParam(value = "type", defaultValue = "all") String type ) {
+        return ServerResponse.createBySuccess(orderService.getOrderList(userPrincipal.getId(), page, size, type));
     }
 
     @PatchMapping("/cancel/{orderNo}")

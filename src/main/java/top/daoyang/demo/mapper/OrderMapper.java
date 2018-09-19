@@ -1,5 +1,6 @@
 package top.daoyang.demo.mapper;
 
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
 import top.daoyang.demo.entity.Order;
 
@@ -21,7 +22,8 @@ public interface OrderMapper {
     Order findOrderByUserIdAndOrderNo(@Param("userId") String userId,
                                       @Param("orderNo") Long orderNo);
 
-    List<Order> findOrderListByUserId(@Param("userId") String userId);
+    List<Order> findOrderListByUserId(@Param("userId") String userId,
+                                      @Param("type") Integer type);
 
     Order findOrderByOrderNo(@Param("orderNo") Long orderNo);
 

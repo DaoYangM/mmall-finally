@@ -16,11 +16,12 @@ public interface OrderService {
 
     OrderResponse getOrderByOrderNo(String userId, Long orderNo);
 
-    PageInfo<OrderResponse> getOrderList(String userId, Integer page, Integer size);
+    PageInfo getOrderList(String userId, Integer page, Integer size, String type);
 
     boolean cancelOrder(String userId, Long orderNo);
 
     void payOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, Long orderNo) throws IOException;
 
     String aliPayNotify(HttpServletRequest httpServletRequest) throws AlipayApiException, ParseException;
+
 }

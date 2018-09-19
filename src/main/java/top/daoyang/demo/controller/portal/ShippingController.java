@@ -21,10 +21,15 @@ public class ShippingController {
 
     @GetMapping
     public ServerResponse getShippingList(@AuthenticationPrincipal WXUserDetails userPrincipal,
-                                          @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                          @RequestParam(value = "size", defaultValue = "0") Integer size) {
+                                          @RequestParam(value = "page", defaultValue = "1") Integer page,
+                                          @RequestParam(value = "size", defaultValue = "10") Integer size) {
 
         return ServerResponse.createBySuccess(shippingService.getShippingList(userPrincipal.getId(), page, size));
+    }
+
+    @GetMapping("/checked")
+    public ServerResponse getCheckShipping(@AuthenticationPrincipal WXUserDetails userPrincipal) {
+        return ServerResponse.createBySuccess(shippingService.getCheckShipping(userPrincipal.getId()));
     }
 
     @PostMapping
@@ -48,7 +53,13 @@ public class ShippingController {
         throw new ShippingException(ExceptionEnum.SHIPPING_DELETE_ERROR);
     }
 
-    @PatchMapping("/{shippingId}")
+    @PutMapping("/{shippingId}/checked")
+    public ServerResponse changeChecked(@AuthenticationPrincipal WXUserDetails userPrincipal,
+            @PathVariable Integer shippingId) {
+        return ServerResponse.createBySuccess(shippingService.changeChecked(userPrincipal.getId(), shippingId));
+    }
+
+    @PutMapping("/{shippingId}")
     public ServerResponse patchShippingByShippingId(@PathVariable Integer shippingId,
                                                     @AuthenticationPrincipal WXUserDetails userPrincipal,
                                                     @Valid @RequestBody ShippingCreateRequest shippingCreateRequest) {

@@ -21,6 +21,8 @@ public class OrderResponse {
 
     private BigDecimal postage;
 
+    private Integer totalCount;
+
     private Integer status;
 
     private Date paymentTime;
