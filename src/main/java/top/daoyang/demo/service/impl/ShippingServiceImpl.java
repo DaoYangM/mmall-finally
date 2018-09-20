@@ -13,6 +13,7 @@ import top.daoyang.demo.mapper.ShippingMapper;
 import top.daoyang.demo.payload.request.ShippingCreateRequest;
 import top.daoyang.demo.service.ShippingService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,6 +34,7 @@ public class ShippingServiceImpl implements ShippingService {
         BeanUtils.copyProperties(shippingCreateRequest, shipping);
 
         shipping.setUserId(userId);
+        shippingMapper.changeAllUncheck(userId);
 
         if (shippingMapper.insertSelective(shipping) == 1) {
             return shipping;
@@ -49,7 +51,22 @@ public class ShippingServiceImpl implements ShippingService {
 
     @Override
     public boolean deleteShippingByShippingId(String userId, Integer shippingId) {
+        Shipping shipping = getShippingByShippingId(userId, shippingId);
 
+        if (shipping.getChecked() == 1) {
+            List<Shipping> shippingList = shippingMapper.findByUserId(userId);
+
+            if (shippingList.size() > 1) {
+
+                for (int i = 0; i < shippingList.size(); i++) {
+                    if (! shippingList.get(i).getId().equals(shipping.getId())) {
+                        shippingList.get(i).setChecked(1);
+                        shippingMapper.updateByPrimaryKeySelective(shippingList.get(i));
+                        break;
+                    }
+                }
+            }
+        }
         return shippingMapper.deleteByShippingIdAndUserId(userId, shippingId) == 1;
     }
 

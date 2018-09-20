@@ -161,6 +161,9 @@
       <if test="receiverZip != null" >
         receiver_zip = #{receiverZip,jdbcType=VARCHAR},
       </if>
+      <if test="checked != null">
+        checked = #{checked, jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
