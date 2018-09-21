@@ -32,7 +32,9 @@ public enum  ExceptionEnum {
     PRODUCT_UPDATE_ERROR("Product update error", 703),
     PRODUCT_SET_STATUS_ERROR("Product set status error", 704),
     PRODUCT_OUT_OF_STOCK("Product Insufficient inventory", 705),
-    PRODUCT_UPDATE_STOCK_ERROR("Product update staock error", 706),
+    PRODUCT_UPDATE_STOCK_ERROR("Product update stock error", 706),
+    PRODUCT_SPECIFY_DOES_EXIST("Product specify does exist", 708),
+
 
     CART_CREATE_ERROR("Cart insert failure", 801),
     CART_DOES_NOT_EXIST("Cart doesn't exist", 802) ,
@@ -58,6 +60,10 @@ public enum  ExceptionEnum {
     ORDER_HAS_BEEN_SUCCESS("Order has been success", 1106),
     ORDER_STATUS_ERROR("Order status error", 1107),
     ORDER_STATUS_UPDATE_ERROR("Order status update error", 1108),
+    ORDER_CREATE_OUT_OF_STOCK_ERROR("Order create out of stock error", 1109),
+    ORDER_CREATE_ERROR("Order create  error", 1110),
+    ORDER_ITEM_CREATE_ERROR("OrderItem create error", 1111),
+
 
     ALIPAY_REPEATED_CALL("Alipay repeated call", 1201),
     ALIPAY_TRADE_STATUS_ERROR("Alipay trade status error", 1202),

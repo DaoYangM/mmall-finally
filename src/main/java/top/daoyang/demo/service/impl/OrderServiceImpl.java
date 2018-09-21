@@ -22,10 +22,14 @@ import top.daoyang.demo.exception.ProductException;
 import top.daoyang.demo.mapper.*;
 import top.daoyang.demo.payload.reponse.CartResponse;
 import top.daoyang.demo.payload.reponse.OrderResponse;
+import top.daoyang.demo.payload.request.PreCreateOrderRequest;
 import top.daoyang.demo.service.CartService;
 import top.daoyang.demo.service.OrderService;
+import top.daoyang.demo.service.ProductService;
 import top.daoyang.demo.service.ShippingService;
+import top.daoyang.demo.util.BigDecimalUtils;
 
+import javax.security.auth.message.AuthException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -62,7 +66,13 @@ public class OrderServiceImpl implements OrderService {
     private ShippingService shippingService;
 
     @Autowired
+    private ProductSpecifyPriceStockMapper productSpecifyPriceStockMapper;
+
+    @Autowired
     private CartService cartService;
+
+    @Autowired
+    private ProductService productService;
 
     @Value("${app.alipay.appId}")
     private String APP_ID;
@@ -326,6 +336,59 @@ public class OrderServiceImpl implements OrderService {
             // TODO 验签失败则记录异常日志，并在response中返回failure.
             return "failure";
         }
+    }
+
+    @Override
+    public void preCreateOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, PreCreateOrderRequest preCreateOrderRequest) throws IOException {
+        Product product = productService.findProductByProductId(preCreateOrderRequest.getProductId(), ProductStatusEnum.ON_SALE.getValue());
+
+        ProductSpecifyPriceStock productSpecifyPriceStock = Optional.ofNullable(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(preCreateOrderRequest.getProductId(), preCreateOrderRequest.getSpecifyId()))
+            .orElseThrow(() -> new ProductException(ExceptionEnum.PRODUCT_SPECIFY_DOES_EXIST));
+
+        Shipping shipping = shippingService.getShippingByShippingId(userId, preCreateOrderRequest.getShippingId());
+        if (preCreateOrderRequest.getCount() > productSpecifyPriceStock.getStock()) {
+            throw new OrderException(ExceptionEnum.ORDER_CREATE_OUT_OF_STOCK_ERROR);
+        }
+
+        BigDecimal totalPrice = BigDecimalUtils.mul(productSpecifyPriceStock.getPrice().doubleValue(), preCreateOrderRequest.getCount());
+
+        Long orderNO = generateOrderNumber();
+        Order order = new Order();
+
+        order.setOrderNo(orderNO);
+        order.setUserId(userId);
+        order.setShippingId(shipping.getId());
+        order.setPayment(totalPrice);
+        order.setPaymentType(1);
+        order.setStatus(OrderStatusEnum.NO_PAY.getCode());
+        order.setPostage(0);
+
+         if (orderMapper.insertSelective(order) == 1) {
+             productSpecifyPriceStockMapper.updatePASStock(productSpecifyPriceStock.getStock() - preCreateOrderRequest.getCount(),
+                     preCreateOrderRequest.getSpecifyId());
+
+             OrderItem orderItem = new OrderItem();
+
+
+             orderItem.setUserId(userId);
+             orderItem.setOrderNo(order.getOrderNo());
+
+             orderItem.setProductId(product.getId());
+             orderItem.setProductName(product.getName());
+             orderItem.setProductImage(product.getMainImage());
+             orderItem.setCurrentUnitPrice(product.getPrice());
+             orderItem.setQuantity(preCreateOrderRequest.getCount());
+             orderItem.setTotalPrice(totalPrice);
+
+             if ( orderItemMapper.insertSelective(orderItem) == 1) {
+                 payOrder(httpRequest, httpResponse, userId, orderNO);
+             } else {
+                 throw new OrderException(ExceptionEnum.ORDER_ITEM_CREATE_ERROR);
+             }
+
+         } else {
+            throw new OrderException(ExceptionEnum.ORDER_CREATE_ERROR);
+         }
     }
 
     private Long generateOrderNumber() {

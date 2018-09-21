@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import top.daoyang.demo.payload.ServerResponse;
+import top.daoyang.demo.payload.request.PreCreateOrderRequest;
 import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.OrderService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -62,5 +64,13 @@ public class OrderController {
     public ServerResponse cancelOrder(@AuthenticationPrincipal WXUserDetails userPrincipal,
                                       @PathVariable Long orderNo) {
         return ServerResponse.createBySuccess(orderService.cancelOrder(userPrincipal.getId(), orderNo));
+    }
+
+    @PostMapping("/pre/create")
+    public void preCreateOrder(@AuthenticationPrincipal WXUserDetails userDetails,
+                                         @Valid @RequestBody PreCreateOrderRequest preCreateOrderRequest,
+                                         HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+
+        orderService.preCreateOrder(httpRequest, httpResponse, userDetails.getId(), preCreateOrderRequest);
     }
 }

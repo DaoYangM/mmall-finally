@@ -4,6 +4,7 @@ import com.alipay.api.AlipayApiException;
 import com.github.pagehelper.PageInfo;
 import top.daoyang.demo.entity.Order;
 import top.daoyang.demo.payload.reponse.OrderResponse;
+import top.daoyang.demo.payload.request.PreCreateOrderRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,4 +25,5 @@ public interface OrderService {
 
     String aliPayNotify(HttpServletRequest httpServletRequest) throws AlipayApiException, ParseException;
 
+    void preCreateOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, PreCreateOrderRequest preCreateOrderRequest) throws IOException;
 }
