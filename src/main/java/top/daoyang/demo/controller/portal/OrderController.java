@@ -34,11 +34,11 @@ public class OrderController {
         return ServerResponse.createBySuccess(orderService.createOrder(userPrincipal.getId(), shippingId));
     }
     @GetMapping("/pay/{orderNo}")
-    public void pay(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+    public ServerResponse pay(HttpServletRequest httpRequest,
 //                    @AuthenticationPrincipal WXUserDetails userPrincipal,
                     @PathVariable Long orderNo) throws IOException {
 
-        orderService.payOrder(httpRequest, httpResponse, "22", orderNo);
+        return ServerResponse.createBySuccess(orderService.payOrder(httpRequest, "22", orderNo));
     }
 
     @PostMapping("/alipay/notify")

@@ -4,9 +4,12 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.request.AlipayTradePrecreateRequest;
+import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +30,16 @@ import top.daoyang.demo.service.CartService;
 import top.daoyang.demo.service.OrderService;
 import top.daoyang.demo.service.ProductService;
 import top.daoyang.demo.service.ShippingService;
+import top.daoyang.demo.util.AlipayQRCodeExpUtils;
 import top.daoyang.demo.util.BigDecimalUtils;
+import top.daoyang.demo.util.FtpUtils;
+import top.daoyang.demo.util.MatrixToImageWriter;
 
-import javax.security.auth.message.AuthException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -85,6 +93,30 @@ public class OrderServiceImpl implements OrderService {
 
     @Value("${app.alipay.notifyUrl}")
     private String NOTIFY_URL;
+
+    @Value("${app.natAppServer}")
+    private String natAppServer;
+
+    @Value("${app.ftp.username}")
+    private String ftpUserName;
+
+    @Value("${app.ftp.host}")
+    private String ftpHost;
+
+    @Value("${app.ftp.password}")
+    private String ftpPassword;
+
+    @Value("${app.ftp.uploadFold}")
+    private String ftpUploadFold;
+
+    @Value("${app.qrCode.height}")
+    private String qrCodeHeight;
+
+    @Value("${app.qrCode.width}")
+    private String qrCodeWidth;
+
+    @Value("${app.qrCode.format}")
+    private String qrCodeFormat;
 
     @Override
     @Transactional
@@ -237,7 +269,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void payOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, Long orderNo) throws IOException {
+    public String payOrder(HttpServletRequest httpRequest, String userId, Long orderNo) throws IOException {
         Order order = Optional.ofNullable(orderMapper.findOrderByUserIdAndOrderNo(userId, orderNo))
                 .orElseThrow(() -> new OrderException(ExceptionEnum.ORDER_DOES_NOT_EXIST));
 
@@ -253,26 +285,56 @@ public class OrderServiceImpl implements OrderService {
         }
 
         AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipaydev.com/gateway.do", APP_ID, APP_PRIVATE_KEY, "json", "utf-8", ALIPAY_PUBLIC_KEY, "RSA2"); //获得初始化的AlipayClient
-        AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();//创建API对应的request
-//        AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();
+
+        AlipayTradePrecreateRequest alipayRequest = new AlipayTradePrecreateRequest ();
         alipayRequest.setReturnUrl("http://daoyang.natapp1.cc/order/alipay/notify");
         alipayRequest.setNotifyUrl(NOTIFY_URL + "/order/alipay/notify");//在公共参数中设置回跳和通知地址
         alipayRequest.setBizContent("{" +
                 "    \"out_trade_no\":\"" + order.getOrderNo()+ "\"," +
-                "    \"product_code\":\"FAST_INSTANT_TRADE_PAY\"," +
                 "    \"total_amount\":" + order.getPayment() + "," +
-                "    \"subject\":\"" + order.getOrderNo()+"\"" +
-                "  }");//填充业务参数
-        String form = "";
+                "    \"subject\":\"" + order.getOrderNo()+"\"" +  "," +
+                "    \"store_id\":\"NJ_001\"," +
+                "    \"timeout_express\":\"90m\"}");//
+        AlipayTradePrecreateResponse response = null;
         try {
-            form = alipayClient.pageExecute(alipayRequest).getBody(); //调用SDK生成表单
+            response = alipayClient.execute(alipayRequest);
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
-        httpResponse.setContentType("text/html;charset=" + "utf-8");
-        httpResponse.getWriter().write(form);//直接将完整的表单html输出到页面
-        httpResponse.getWriter().flush();
-        httpResponse.getWriter().close();
+
+        String body = response.getBody();
+        log.info(body);
+        String localUploadPath = httpRequest.getServletContext().getRealPath("upload");
+        File localFold = new File(localUploadPath);
+        if (!localFold.exists()) {
+            localFold.setWritable(true);
+            localFold.mkdirs();
+            log.info("Creating fold {}", localUploadPath);
+        }
+        String qrCodeAddress = AlipayQRCodeExpUtils.qrCodeAddress(body);
+        log.info("qrCodeAddress {}", qrCodeAddress);
+
+        String uuId = UUID.randomUUID().toString();
+
+        File imgOutFile = MatrixToImageWriter.generateCode(qrCodeAddress, localFold.getAbsolutePath(), Integer.parseInt(qrCodeHeight), Integer.parseInt(qrCodeWidth), uuId, qrCodeFormat);
+
+        try {
+            FtpUtils.upload(ftpHost,imgOutFile.getName(), new FileInputStream(imgOutFile), ftpUserName, ftpPassword, ftpUploadFold);
+            if (imgOutFile.setWritable(true)) {
+                log.info("Setting imgFile writable true");
+            }
+            imgOutFile.setExecutable(true);
+            if (imgOutFile.delete()) {
+                log.info("Local image deleted");
+            } else {
+                log.info("Local image deleted failure");
+            }
+        } catch (SftpException | FileNotFoundException | JSchException e) {
+            e.printStackTrace();
+        }
+
+        log.info("All processing of alipay has been finished");
+        return "ftp://" + ftpHost + "/" +  ftpUploadFold +"/" + uuId + ".jpg";
     }
 
     @Override
@@ -369,7 +431,6 @@ public class OrderServiceImpl implements OrderService {
 
              OrderItem orderItem = new OrderItem();
 
-
              orderItem.setUserId(userId);
              orderItem.setOrderNo(order.getOrderNo());
 
@@ -380,8 +441,8 @@ public class OrderServiceImpl implements OrderService {
              orderItem.setQuantity(preCreateOrderRequest.getCount());
              orderItem.setTotalPrice(totalPrice);
 
-             if ( orderItemMapper.insertSelective(orderItem) == 1) {
-                 payOrder(httpRequest, httpResponse, userId, orderNO);
+             if (orderItemMapper.insertSelective(orderItem) == 1) {
+                 payOrder(httpRequest, userId, orderNO);
              } else {
                  throw new OrderException(ExceptionEnum.ORDER_ITEM_CREATE_ERROR);
              }

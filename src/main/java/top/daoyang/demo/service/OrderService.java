@@ -2,7 +2,6 @@ package top.daoyang.demo.service;
 
 import com.alipay.api.AlipayApiException;
 import com.github.pagehelper.PageInfo;
-import top.daoyang.demo.entity.Order;
 import top.daoyang.demo.payload.reponse.OrderResponse;
 import top.daoyang.demo.payload.request.PreCreateOrderRequest;
 
@@ -21,7 +20,7 @@ public interface OrderService {
 
     boolean cancelOrder(String userId, Long orderNo);
 
-    void payOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, Long orderNo) throws IOException;
+    String payOrder(HttpServletRequest httpRequest, String userId, Long orderNo) throws IOException;
 
     String aliPayNotify(HttpServletRequest httpServletRequest) throws AlipayApiException, ParseException;
 
