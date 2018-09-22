@@ -46,7 +46,7 @@
       #{receiverZip,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="top.daoyang.demo.entity.Shipping" >
+  <insert id="insertSelective" parameterType="top.daoyang.demo.entity.Shipping"  useGeneratedKeys="true" keyProperty="id">
     insert into mmall_shipping
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

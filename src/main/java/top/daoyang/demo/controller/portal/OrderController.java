@@ -67,10 +67,10 @@ public class OrderController {
     }
 
     @PostMapping("/pre/create")
-    public void preCreateOrder(@AuthenticationPrincipal WXUserDetails userDetails,
+    public ServerResponse preCreateOrder(@AuthenticationPrincipal WXUserDetails userDetails,
                                          @Valid @RequestBody PreCreateOrderRequest preCreateOrderRequest,
                                          HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
 
-        orderService.preCreateOrder(httpRequest, httpResponse, userDetails.getId(), preCreateOrderRequest);
+        return ServerResponse.createBySuccess(orderService.preCreateOrder(httpRequest, httpResponse, userDetails.getId(), preCreateOrderRequest));
     }
 }

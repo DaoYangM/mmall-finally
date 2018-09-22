@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="top.daoyang.demo.entity.PayInfo" >
     <constructor >
       <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="user_id" jdbcType="BIGINT" javaType="java.lang.Long" />
+      <arg column="user_id" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="order_no" jdbcType="BIGINT" javaType="java.lang.Long" />
       <arg column="pay_platform" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="platform_number" jdbcType="VARCHAR" javaType="java.lang.String" />
@@ -68,7 +68,7 @@
         #{id,jdbcType=INTEGER},
       </if>
       <if test="userId != null" >
-        #{userId,jdbcType=BIGINT},
+        #{userId,jdbcType=VARCHAR},
       </if>
       <if test="orderNo != null" >
         #{orderNo,jdbcType=BIGINT},
@@ -94,7 +94,7 @@
     update mmall_pay_info
     <set >
       <if test="userId != null" >
-        user_id = #{userId,jdbcType=INTEGER},
+        user_id = #{userId,jdbcType=VARCHAR},
       </if>
       <if test="orderNo != null" >
         order_no = #{orderNo,jdbcType=BIGINT},
@@ -119,7 +119,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="top.daoyang.demo.entity.PayInfo" >
     update mmall_pay_info
-    set user_id = #{userId,jdbcType=INTEGER},
+    set user_id = #{userId,jdbcType=VARCHAR},
       order_no = #{orderNo,jdbcType=BIGINT},
       pay_platform = #{payPlatform,jdbcType=INTEGER},
       platform_number = #{platformNumber,jdbcType=VARCHAR},

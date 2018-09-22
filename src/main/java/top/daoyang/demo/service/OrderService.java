@@ -24,5 +24,5 @@ public interface OrderService {
 
     String aliPayNotify(HttpServletRequest httpServletRequest) throws AlipayApiException, ParseException;
 
-    void preCreateOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, PreCreateOrderRequest preCreateOrderRequest) throws IOException;
+    String preCreateOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, PreCreateOrderRequest preCreateOrderRequest) throws IOException;
 }

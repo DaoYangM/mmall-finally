@@ -75,6 +75,7 @@ public class FtpUtils {
         }
         try {
             sftp.put(inputStream, fileName);
+            log.info("sftp location {}", sftp.pwd());
         } catch (SftpException e) {
             log.error("Uploading file fail");
             log.info(e.getMessage());

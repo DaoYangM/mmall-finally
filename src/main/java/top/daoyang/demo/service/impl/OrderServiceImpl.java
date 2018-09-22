@@ -109,6 +109,9 @@ public class OrderServiceImpl implements OrderService {
     @Value("${app.ftp.uploadFold}")
     private String ftpUploadFold;
 
+    @Value("${app.ftp.responseFold}")
+    private String responseFold;
+
     @Value("${app.qrCode.height}")
     private String qrCodeHeight;
 
@@ -117,6 +120,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Value("${app.qrCode.format}")
     private String qrCodeFormat;
+
+    @Value("${app.imageHost}")
+    private String imageHost;
 
     @Override
     @Transactional
@@ -334,7 +340,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         log.info("All processing of alipay has been finished");
-        return "ftp://" + ftpHost + "/" +  ftpUploadFold +"/" + uuId + ".jpg";
+        return imageHost + "/" +  responseFold +"/" + uuId + ".jpg";
     }
 
     @Override
@@ -401,7 +407,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void preCreateOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, PreCreateOrderRequest preCreateOrderRequest) throws IOException {
+    public String preCreateOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, PreCreateOrderRequest preCreateOrderRequest) throws IOException {
         Product product = productService.findProductByProductId(preCreateOrderRequest.getProductId(), ProductStatusEnum.ON_SALE.getValue());
 
         ProductSpecifyPriceStock productSpecifyPriceStock = Optional.ofNullable(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(preCreateOrderRequest.getProductId(), preCreateOrderRequest.getSpecifyId()))
@@ -442,7 +448,7 @@ public class OrderServiceImpl implements OrderService {
              orderItem.setTotalPrice(totalPrice);
 
              if (orderItemMapper.insertSelective(orderItem) == 1) {
-                 payOrder(httpRequest, userId, orderNO);
+                 return payOrder(httpRequest, userId, orderNO);
              } else {
                  throw new OrderException(ExceptionEnum.ORDER_ITEM_CREATE_ERROR);
              }

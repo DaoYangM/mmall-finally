@@ -33,17 +33,20 @@ app:
   natAppServer: #支付宝回调
     http://daoyang.natapp1.cc
 
+  imageHost: http://img.daoyang.top
+
   ftp:
     host: daoyang.top # 阿里云服务器 ftp上传图片
     username: ftpuser
     password: yedeyang
-    uploadFold: alipayQRCode
+    uploadFold: /var/ftp/pub/alipayQRCode
+    responseFold: /alipayQRCode
 
   qrCode:
     height:
-      150
+      300
     width:
-      150
+      300
     format:
       jpg
 
