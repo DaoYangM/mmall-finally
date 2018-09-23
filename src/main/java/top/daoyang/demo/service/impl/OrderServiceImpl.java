@@ -213,6 +213,7 @@ public class OrderServiceImpl implements OrderService {
             orderItemResponse.setQuantity(orderItem.getQuantity());
             orderItemResponse.setCurrentUnitPrice(orderItem.getCurrentUnitPrice());
             orderItemResponse.setTotalPrice(orderItem.getTotalPrice());
+            orderItemResponse.setSpecifyId(orderItem.getSpecifyId());
             orderItemResponse.setCreateTime(order.getCreateTime());
 
             totalCount.updateAndGet(v -> v + orderItem.getQuantity());
@@ -220,7 +221,7 @@ public class OrderServiceImpl implements OrderService {
             orderResponse.orderItems.add(orderItemResponse);
         });
 
-//        orderResponse.setShipping(shippingService.getShippingByShippingId(userId, order.getShippingId()));
+        orderResponse.setShipping(shippingService.getShippingByShippingId(userId, order.getShippingId()));
         orderResponse.setTotalCount(totalCount.get());
         return orderResponse;
     }
@@ -410,15 +411,22 @@ public class OrderServiceImpl implements OrderService {
     public String preCreateOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, PreCreateOrderRequest preCreateOrderRequest) throws IOException {
         Product product = productService.findProductByProductId(preCreateOrderRequest.getProductId(), ProductStatusEnum.ON_SALE.getValue());
 
-        ProductSpecifyPriceStock productSpecifyPriceStock = Optional.ofNullable(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(preCreateOrderRequest.getProductId(), preCreateOrderRequest.getSpecifyId()))
-            .orElseThrow(() -> new ProductException(ExceptionEnum.PRODUCT_SPECIFY_DOES_EXIST));
+        BigDecimal totalPrice = new BigDecimal("0");
 
-        Shipping shipping = shippingService.getShippingByShippingId(userId, preCreateOrderRequest.getShippingId());
-        if (preCreateOrderRequest.getCount() > productSpecifyPriceStock.getStock()) {
-            throw new OrderException(ExceptionEnum.ORDER_CREATE_OUT_OF_STOCK_ERROR);
+        if (preCreateOrderRequest.getSpecifyId() != null) {
+            ProductSpecifyPriceStock productSpecifyPriceStock = Optional.ofNullable(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(preCreateOrderRequest.getProductId(), preCreateOrderRequest.getSpecifyId()))
+                    .orElseThrow(() -> new ProductException(ExceptionEnum.PRODUCT_SPECIFY_DOES_EXIST));
+            totalPrice = checkPriceAndStock(productSpecifyPriceStock.getPrice(), productSpecifyPriceStock.getStock(), preCreateOrderRequest.getCount());
+
+            productSpecifyPriceStockMapper.updatePASStock(productSpecifyPriceStock.getStock() - preCreateOrderRequest.getCount(),
+                    preCreateOrderRequest.getSpecifyId());
+        } else {
+            totalPrice = checkPriceAndStock(product.getPrice(), product.getStock(), preCreateOrderRequest.getCount());
+            product.setStock(product.getStock() - preCreateOrderRequest.getCount());
+            productMapper.updateByPrimaryKeySelective(product);
         }
 
-        BigDecimal totalPrice = BigDecimalUtils.mul(productSpecifyPriceStock.getPrice().doubleValue(), preCreateOrderRequest.getCount());
+        Shipping shipping = shippingService.getShippingByShippingId(userId, preCreateOrderRequest.getShippingId());
 
         Long orderNO = generateOrderNumber();
         Order order = new Order();
@@ -432,14 +440,12 @@ public class OrderServiceImpl implements OrderService {
         order.setPostage(0);
 
          if (orderMapper.insertSelective(order) == 1) {
-             productSpecifyPriceStockMapper.updatePASStock(productSpecifyPriceStock.getStock() - preCreateOrderRequest.getCount(),
-                     preCreateOrderRequest.getSpecifyId());
 
              OrderItem orderItem = new OrderItem();
 
              orderItem.setUserId(userId);
              orderItem.setOrderNo(order.getOrderNo());
-
+             orderItem.setSpecifyId(preCreateOrderRequest.getSpecifyId());
              orderItem.setProductId(product.getId());
              orderItem.setProductName(product.getName());
              orderItem.setProductImage(product.getMainImage());
@@ -466,5 +472,12 @@ public class OrderServiceImpl implements OrderService {
     private Order getOrderByOrderId(String userId, Long orderNo) {
          return Optional.ofNullable(orderMapper.findOrderByUserIdAndOrderNo(userId, orderNo))
                 .orElseThrow(() -> new OrderException(ExceptionEnum.ORDER_DOES_NOT_EXIST));
+    }
+
+    private BigDecimal checkPriceAndStock(BigDecimal price, Integer stock, Integer count) {
+        if (count > stock) {
+            throw new OrderException(ExceptionEnum.ORDER_CREATE_OUT_OF_STOCK_ERROR);
+        }
+        return BigDecimalUtils.mul(price.doubleValue(), count);
     }
 }

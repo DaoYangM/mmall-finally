@@ -15,7 +15,6 @@ public class PreCreateOrderRequest {
     @NotNull
     private Integer count;
 
-    @NotNull
     private Integer specifyId;
 
     @NotNull

@@ -22,11 +22,13 @@ public class OrderItem {
 
     private BigDecimal totalPrice;
 
+    private Integer specifyId;
+
     private Date createTime;
 
     private Date updateTime;
 
-    public OrderItem(Integer id, String userId, Long orderNo, Integer productId, String productName, String productImage, BigDecimal currentUnitPrice, Integer quantity, BigDecimal totalPrice, Date createTime, Date updateTime) {
+    public OrderItem(Integer id, String userId, Long orderNo, Integer productId, String productName, String productImage, BigDecimal currentUnitPrice, Integer quantity, BigDecimal totalPrice, Integer specifyId, Date createTime, Date updateTime) {
         this.id = id;
         this.userId = userId;
         this.orderNo = orderNo;
@@ -36,6 +38,7 @@ public class OrderItem {
         this.currentUnitPrice = currentUnitPrice;
         this.quantity = quantity;
         this.totalPrice = totalPrice;
+        this.specifyId = specifyId;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
@@ -114,6 +117,14 @@ public class OrderItem {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public Integer getSpecifyId() {
+        return specifyId;
+    }
+
+    public void setSpecifyId(Integer specifyId) {
+        this.specifyId = specifyId;
     }
 
     public Date getCreateTime() {

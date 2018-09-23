@@ -12,13 +12,14 @@
       <arg column="current_unit_price" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
       <arg column="quantity" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="total_price" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="specify_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_id, order_no, product_id, product_name, product_image, current_unit_price, 
-    quantity, total_price, create_time, update_time
+    quantity, total_price, specify_id, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -70,6 +71,9 @@
       <if test="totalPrice != null" >
         total_price,
       </if>
+      <if test="specifyId != null">
+        specify_id
+      </if>
       <if test="createTime != null" >
         create_time,
       </if>
@@ -104,6 +108,9 @@
       </if>
       <if test="totalPrice != null" >
         #{totalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="specifyId != null" >
+        #{specifyId,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},

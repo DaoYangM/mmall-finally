@@ -25,6 +25,8 @@ public class OrderResponse {
 
     private Integer status;
 
+    private Shipping shipping;
+
     private Date paymentTime;
 
     private Date sendTime;
@@ -48,15 +50,14 @@ public class OrderResponse {
 
         private String productImage;
 
-        private BigDecimal
-                currentUnitPrice;
+        private BigDecimal currentUnitPrice;
 
         private Integer quantity;
 
         private BigDecimal totalPrice;
 
+        private Integer specifyId;
+
         private Date createTime;
     }
-
-    private Shipping shipping;
 }
