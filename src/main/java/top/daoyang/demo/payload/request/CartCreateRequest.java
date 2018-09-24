@@ -15,6 +15,14 @@ public class CartCreateRequest {
     @NotNull
     private Integer count;
 
+    private String specifyIds;
+
+    public CartCreateRequest(@NotNull Integer productId, @NotNull Integer count, String specifyIds) {
+        this.productId = productId;
+        this.count = count;
+        this.specifyIds = specifyIds;
+    }
+
     public CartCreateRequest(@NotNull Integer productId, @NotNull Integer count) {
         this.productId = productId;
         this.count = count;

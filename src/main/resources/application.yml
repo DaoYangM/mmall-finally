@@ -24,7 +24,7 @@ logging:
       top.daoyang.demo.mapper: DEBUG
 
 #pagehelper:
-#  default-count: false
+#  default-quantity: false
 #  helperDialect: mysql
 #  reasonable: true
 #  supportMethodsArguments: true

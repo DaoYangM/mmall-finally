@@ -33,12 +33,12 @@ public class OrderController {
                                       @PathVariable Integer shippingId) {
         return ServerResponse.createBySuccess(orderService.createOrder(userPrincipal.getId(), shippingId));
     }
-    @GetMapping("/pay/{orderNo}")
+    @PostMapping("/pay/{orderNo}")
     public ServerResponse pay(HttpServletRequest httpRequest,
-//                    @AuthenticationPrincipal WXUserDetails userPrincipal,
+                    @AuthenticationPrincipal WXUserDetails userPrincipal,
                     @PathVariable Long orderNo) throws IOException {
 
-        return ServerResponse.createBySuccess(orderService.payOrder(httpRequest, "22", orderNo));
+        return ServerResponse.createBySuccess(orderService.payOrder(httpRequest, userPrincipal.getId(), orderNo));
     }
 
     @PostMapping("/alipay/notify")

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import top.daoyang.demo.enums.ProductStatusEnum;
 import top.daoyang.demo.payload.ServerResponse;
 import top.daoyang.demo.payload.request.CartCreateRequest;
+import top.daoyang.demo.payload.request.CartUpdateRequest;
 import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.CartService;
 
@@ -31,8 +32,8 @@ public class CartController {
 
     @PutMapping
     public ServerResponse updateCart(@AuthenticationPrincipal WXUserDetails userPrincipal,
-                                    @Valid @RequestBody CartCreateRequest cartCreateRequest) {
-        return ServerResponse.createBySuccess(cartService.updateCart(userPrincipal.getId(), cartCreateRequest));
+                                     @Valid @RequestBody CartUpdateRequest cartUpdateRequest) {
+        return ServerResponse.createBySuccess(cartService.updateCart(userPrincipal.getId(), cartUpdateRequest));
     }
 
     @GetMapping("/count")

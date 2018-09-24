@@ -158,4 +158,12 @@
     FROM
     mmall_cart
   </select>
+  <select id="findByUserIdAndProductIdAndSpecifyId" parameterType="map" resultType="top.daoyang.demo.entity.Cart">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM
+    mmall_cart
+    WHERE
+    user_id = #{userId} AND product_id = #{productId} AND  specify_id = #{specifyId}
+  </select>
 </mapper>

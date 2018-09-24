@@ -18,7 +18,9 @@ import top.daoyang.demo.mapper.ProductSpecifyPriceStockMapper;
 import top.daoyang.demo.payload.reponse.CartItemResponse;
 import top.daoyang.demo.payload.reponse.CartResponse;
 import top.daoyang.demo.payload.request.CartCreateRequest;
+import top.daoyang.demo.payload.request.CartUpdateRequest;
 import top.daoyang.demo.service.CartService;
+import top.daoyang.demo.service.ProductService;
 import top.daoyang.demo.util.BigDecimalUtils;
 
 import java.math.BigDecimal;
@@ -61,7 +63,7 @@ public class CartServiceImpl implements CartService {
 
             if (cartItemResponse.getProductChecked().equals(ProductStatusEnum.CHECKED.getValue())) {
                 cartItemResponse.setProductTotalPrice(
-                        BigDecimalUtils.mul(cartItemResponse.getQuantity(), cartItemResponse.getProductPrice().doubleValue()));
+                        BigDecimalUtils.mul(cartItemResponse.getQuantity(), cartItemResponse.getPrice().doubleValue()));
                 cartTotalPrice[0] = cartTotalPrice[0].add(cartItemResponse.getProductTotalPrice());
             }
 
@@ -87,25 +89,57 @@ public class CartServiceImpl implements CartService {
                 ProductStatusEnum.ON_SALE.getValue()))
                     .orElseThrow(() -> new ProductException(ExceptionEnum.PRODUCT_DOES_NOT_EXIST));
 
+        Integer stock = product.getStock();
+        Integer specifyId = null;
+        cart.setUserId(userId);
 
-        Cart existCart = cartMapper.findByUserIdAndProductId(userId, product.getId());
-        if (existCart != null) {
-            existCart.setQuantity(existCart.getQuantity() + cartCreateRequest.getCount());
-            BeanUtils.copyProperties(existCart, cart);
+        ProductSpecifyPriceStock productSpecifyPriceStock = Optional.ofNullable(productSpecifyPriceStockMapper
+                .getProductSpecifyPriceAndStock(cartCreateRequest.getProductId(), cartCreateRequest.getSpecifyIds()))
+                .orElse(null);
+
+        Cart existCart = null;
+
+        if (productSpecifyPriceStock != null) {
+            specifyId = productSpecifyPriceStock.getId();
+
+            existCart = Optional.ofNullable(cartMapper.findByUserIdAndProductIdAndSpecifyId(userId, product.getId(), specifyId))
+                    .orElse(null);
         } else {
-            cart.setQuantity(cartCreateRequest.getCount());
+
+            existCart = Optional.ofNullable(cartMapper.findByUserIdAndProductId(userId, product.getId()))
+                    .orElse(null);
         }
 
-        if (product.getStock() < cart.getQuantity())
-            throw new ProductException(ExceptionEnum.PRODUCT_OUT_OF_STOCK);
-
         if (existCart != null) {
-            return updateCart(userId, new CartCreateRequest(cart.getProductId() ,cart.getQuantity()));
+            cartCreateRequest.setCount(existCart.getQuantity() + cartCreateRequest.getCount());
+
+            if (existCart.getSpecifyId() != null) {
+                if (cartCreateRequest.getSpecifyIds() != null) {
+                    stock = productSpecifyPriceStock.getStock();
+                    cart.setSpecifyId(specifyId);
+
+                    if (productSpecifyPriceStock.getId().equals(existCart.getSpecifyId())) {
+
+                        return updateCart(userId, cartCreateRequest, productSpecifyPriceStock.getId());
+                    }
+                } else {
+                    throw new ProductException(ExceptionEnum.CART_SPECIFY_ID_DOES_NOT_EXIST);
+                }
+            } else {
+                return updateCart(userId, cartCreateRequest, null);
+            }
+        }
+
+
+        if (stock < cartCreateRequest.getCount()) {
+            throw new ProductException(ExceptionEnum.PRODUCT_OUT_OF_STOCK);
         }
 
         cart.setUserId(userId);
         cart.setProductId(product.getId());
         cart.setChecked(1);
+        cart.setSpecifyId(specifyId);
+        cart.setQuantity(cartCreateRequest.getCount());
 
         if (cartMapper.insertSelective(cart) == 1) {
             return getCartByUserId(userId);
@@ -113,23 +147,35 @@ public class CartServiceImpl implements CartService {
         throw new CartException(ExceptionEnum.CART_CREATE_ERROR);
     }
 
-    @Override
-    @Transactional
-    public CartResponse updateCart(String userId, CartCreateRequest cartCreateRequest) {
+    private CartResponse updateCart(String userId, CartCreateRequest cartCreateRequest, Integer specifyId) {
 
         Product product = Optional.ofNullable(productMapper.findProductByProductId(cartCreateRequest.getProductId(),
                 ProductStatusEnum.ON_SALE.getValue()))
                 .orElseThrow(() -> new ProductException(ExceptionEnum.PRODUCT_DOES_NOT_EXIST));
 
-        Cart cart = Optional.ofNullable(cartMapper.findByUserIdAndProductId(userId, product.getId()))
-                .orElseThrow(() -> new CartException(ExceptionEnum.CART_DOES_NOT_EXIST));
+        Cart cart;
+        if (specifyId == null) {
+            cart = Optional.ofNullable(cartMapper.findByUserIdAndProductId(userId, product.getId()))
+                    .orElseThrow(() -> new CartException(ExceptionEnum.CART_DOES_NOT_EXIST));
+        } else {
+            cart = Optional.ofNullable(cartMapper.findByUserIdAndProductIdAndSpecifyId(userId, product.getId(), specifyId))
+                    .orElseThrow(() -> new CartException(ExceptionEnum.CART_DOES_NOT_EXIST));
+        }
 
         cart.setQuantity(cartCreateRequest.getCount());
+        cart.setSpecifyId(specifyId);
+
         if (cartMapper.updateByPrimaryKeySelective(cart) == 1 ) {
             return getCartByUserId(userId);
         }
 
         throw new CartException(ExceptionEnum.CART_UPDATE_ERROR);
+    }
+
+    @Override
+    @Transactional
+    public CartResponse updateCart(String userId, CartUpdateRequest cartUpdateRequest) {
+        return updateCart(userId, new CartCreateRequest(cartUpdateRequest.getProductId(), cartUpdateRequest.getCount()), cartUpdateRequest.getSpecifyId());
     }
 
     @Override
@@ -181,25 +227,28 @@ public class CartServiceImpl implements CartService {
         Product product = Optional.ofNullable(productMapper.findProductByProductId(productId, ProductStatusEnum.ON_SALE.getValue()))
                 .orElseThrow(() -> new ProductException(ExceptionEnum.PRODUCT_DOES_NOT_EXIST));
         if (specifyId != null) {
-            ProductSpecifyPriceStock productSpecifyPriceStock = Optional.ofNullable(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(productId, specifyId))
+            ProductSpecifyPriceStock productSpecifyPriceStock = Optional.ofNullable(productSpecifyPriceStockMapper
+                    .getProductSpecifyPASBySpecifyId(productId, specifyId))
                     .orElseThrow(() -> new CartException(ExceptionEnum.CART_SPECIFY_ID_DOES_NOT_EXIST));
 
             cartItemResponse.setSpecifyId(productSpecifyPriceStock.getId());
-            productSpecifyPriceStock.getSpecifyIds().split("");
-            cartItemResponse.setProductPrice(productSpecifyPriceStock.getPrice());
+            cartItemResponse.setPrice(productSpecifyPriceStock.getPrice());
             cartItemResponse.setProductStock(productSpecifyPriceStock.getStock());
 
-            List<String> ss = Arrays.stream(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(productId, specifyId).getSpecifyIds().split("")).map(item -> productSpecifyItemMapper.getProductSpecifyItemById(Integer.parseInt(item)).getDescription()).collect(Collectors.toList());
+            List<String> ss = Arrays.stream(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(productId, specifyId)
+                    .getSpecifyIds().split(","))
+                    .map(item -> productSpecifyItemMapper.getProductSpecifyItemById(Integer.parseInt(item)).getDescription())
+                    .collect(Collectors.toList());
             cartItemResponse.setSpecifyDescItems(ss);
             product.setStock(productSpecifyPriceStock.getStock());
         } else {
-            cartItemResponse.setProductPrice(product.getPrice());
+            cartItemResponse.setPrice(product.getPrice());
             cartItemResponse.setProductStock(product.getStock());
         }
         cartItemResponse.setProductId(product.getId());
         cartItemResponse.setProductName(product.getName());
         cartItemResponse.setProductSubtitle(product.getSubtitle());
-        cartItemResponse.setProductMainImage(product.getMainImage());
+        cartItemResponse.setProductImage(product.getMainImage());
         cartItemResponse.setProductStatus(product.getStatus());
 
         if (product.getStock() < cartItemResponse.getQuantity())
@@ -209,5 +258,16 @@ public class CartServiceImpl implements CartService {
         } else {
             cartItemResponse.setLimitQuantity("LIMIT_NUM_SUCCESS");
         }
+    }
+
+    private CartResponse checkAndUpdateCount(String userId, Integer stock, Cart existCart, Cart cart,CartCreateRequest cartCreateRequest, Integer specifyId) {
+
+        if (stock < existCart.getQuantity() + cartCreateRequest.getCount())
+            throw new ProductException(ExceptionEnum.PRODUCT_OUT_OF_STOCK);
+
+        existCart.setQuantity(existCart.getQuantity() + cartCreateRequest.getCount());
+        BeanUtils.copyProperties(existCart, cart);
+
+        return updateCart(userId, new CartCreateRequest(cart.getProductId(), existCart.getQuantity()), specifyId);
     }
 }

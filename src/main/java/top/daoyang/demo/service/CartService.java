@@ -2,13 +2,14 @@ package top.daoyang.demo.service;
 
 import top.daoyang.demo.payload.reponse.CartResponse;
 import top.daoyang.demo.payload.request.CartCreateRequest;
+import top.daoyang.demo.payload.request.CartUpdateRequest;
 
 public interface CartService {
     CartResponse getCartByUserId(String userId);
 
     CartResponse createCart(String userId, CartCreateRequest cartCreateRequest);
 
-    CartResponse updateCart(String userId, CartCreateRequest cartCreateRequest);
+    CartResponse updateCart(String userId, CartUpdateRequest cartUpdateRequest);
 
     CartResponse deleteCart(String userId, Integer productId);
 

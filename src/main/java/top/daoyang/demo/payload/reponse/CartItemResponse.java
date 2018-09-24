@@ -21,9 +21,9 @@ public class CartItemResponse {
 
     private String productSubtitle;
 
-    private String productMainImage;
+    private String productImage;
 
-    private BigDecimal productPrice;
+    private BigDecimal price;
 
     private Integer productStatus;
 

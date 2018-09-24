@@ -155,8 +155,8 @@ public class OrderServiceImpl implements OrderService {
                 orderItem.setOrderNo(order.getOrderNo());
                 orderItem.setProductId(cartItem.getProductId());
                 orderItem.setProductName(cartItem.getProductName());
-                orderItem.setProductImage(cartItem.getProductMainImage());
-                orderItem.setCurrentUnitPrice(cartItem.getProductPrice());
+                orderItem.setProductImage(cartItem.getProductImage());
+                orderItem.setCurrentUnitPrice(cartItem.getPrice());
                 orderItem.setQuantity(cartItem.getQuantity());
                 orderItem.setTotalPrice(cartItem.getProductTotalPrice());
 
@@ -238,7 +238,7 @@ public class OrderServiceImpl implements OrderService {
                 payStatus = OrderStatusEnum.WAIT_DELIVERY.getCode();
                 break;
             case "wait_receipt":
-                payStatus = OrderStatusEnum.WAIT_RECEIPT.getCode();
+                payStatus = OrderStatusEnum.PAID.getCode();
                 break;
             case "wait_comment":
                 payStatus = OrderStatusEnum.WAIT_COMMENT.getCode();
@@ -285,8 +285,6 @@ public class OrderServiceImpl implements OrderService {
                 throw new OrderException(ExceptionEnum.ORDER_HAS_BEEN_CANCELED);
             case PAID:
                 throw new OrderException(ExceptionEnum.ORDER_HAS_BEEN_PAID);
-            case ORDER_CLOSE:
-                throw new OrderException(ExceptionEnum.ORDER_HAS_BEEN_CANCELED);
             case ORDER_SUCCESS:
                 throw new OrderException(ExceptionEnum.ORDER_HAS_BEEN_SUCCESS);
         }
