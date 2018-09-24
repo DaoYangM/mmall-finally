@@ -151,6 +151,10 @@
     DELETE FROM mmall_cart
     WHERE user_id = #{userId} AND checked = 1
   </delete>
+  <delete id="deleteByUserIdAndProductIdAndSpecifyId" parameterType="map">
+    DELETE FROM mmall_cart
+    WHERE user_id = #{userId} AND checked = 1 AND specify_id = #{specifyId}
+  </delete>
 
     <select id="count" parameterType="java.lang.String" resultType="java.lang.Integer">
     SELECT

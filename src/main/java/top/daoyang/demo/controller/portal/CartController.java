@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import top.daoyang.demo.enums.ProductStatusEnum;
 import top.daoyang.demo.payload.ServerResponse;
 import top.daoyang.demo.payload.request.CartCreateRequest;
+import top.daoyang.demo.payload.request.CartDeleteRequest;
 import top.daoyang.demo.payload.request.CartUpdateRequest;
 import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.CartService;
@@ -41,15 +42,15 @@ public class CartController {
         return ServerResponse.createBySuccess(cartService.countOfCart(userPrincipal.getId()));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/all")
     public ServerResponse deleteAllSelectCart(@AuthenticationPrincipal WXUserDetails userPrincipal) {
         return ServerResponse.createBySuccess(cartService.deleteAllSelectCart(userPrincipal.getId()));
     }
 
-    @DeleteMapping("/{productId}")
+    @DeleteMapping
     public ServerResponse deleteCart(@AuthenticationPrincipal WXUserDetails userPrincipal,
-                                     @PathVariable Integer productId) {
-        return ServerResponse.createBySuccess(cartService.deleteCart(userPrincipal.getId(), productId));
+                                     @Valid @RequestBody CartDeleteRequest cartDeleteRequest) {
+        return ServerResponse.createBySuccess(cartService.deleteCart(userPrincipal.getId(), cartDeleteRequest));
     }
 
     @PutMapping("/select/{productId}")

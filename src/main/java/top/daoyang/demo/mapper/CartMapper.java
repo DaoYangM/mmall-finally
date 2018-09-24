@@ -26,6 +26,9 @@ public interface CartMapper {
     int deleteByUserIdAndProductId(@Param("userId") String userId,
                                    @Param("productId") Integer productId);
 
+    int deleteByUserIdAndProductIdAndSpecifyId(@Param("userId") String userId,
+                                              @Param("productId") Integer productId,
+                                              @Param("specifyId") Integer specifyId);
     int deleteAllSelectCart(@Param("userId") String userId);
 
     Integer count(String userId);

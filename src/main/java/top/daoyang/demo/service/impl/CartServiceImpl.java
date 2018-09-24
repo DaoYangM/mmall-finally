@@ -18,6 +18,7 @@ import top.daoyang.demo.mapper.ProductSpecifyPriceStockMapper;
 import top.daoyang.demo.payload.reponse.CartItemResponse;
 import top.daoyang.demo.payload.reponse.CartResponse;
 import top.daoyang.demo.payload.request.CartCreateRequest;
+import top.daoyang.demo.payload.request.CartDeleteRequest;
 import top.daoyang.demo.payload.request.CartUpdateRequest;
 import top.daoyang.demo.service.CartService;
 import top.daoyang.demo.service.ProductService;
@@ -180,8 +181,13 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponse deleteCart(String userId, Integer productId) {
-        cartMapper.deleteByUserIdAndProductId(userId, productId);
+    public CartResponse deleteCart(String userId, CartDeleteRequest cartDeleteRequest) {
+        if (cartDeleteRequest.getSpecifyId() != null) {
+            cartMapper.deleteByUserIdAndProductIdAndSpecifyId(userId, cartDeleteRequest.getSpecifyId(), cartDeleteRequest.getSpecifyId());
+        } else {
+            cartMapper.deleteByUserIdAndProductId(userId, cartDeleteRequest.getProductId());
+        }
+
         return getCartByUserId(userId);
     }
 
