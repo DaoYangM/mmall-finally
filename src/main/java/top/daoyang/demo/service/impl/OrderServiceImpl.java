@@ -126,7 +126,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponse createOrder(String userId, Integer shippingId) {
+    public String createOrder(HttpServletRequest request, String userId, Integer shippingId) throws IOException {
 
         Shipping shipping = shippingService.getShippingByShippingId(userId, shippingId);
 
@@ -159,6 +159,7 @@ public class OrderServiceImpl implements OrderService {
                 orderItem.setCurrentUnitPrice(cartItem.getPrice());
                 orderItem.setQuantity(cartItem.getQuantity());
                 orderItem.setTotalPrice(cartItem.getProductTotalPrice());
+                orderItem.setSpecifyId(cartItem.getSpecifyId());
 
                 orderTotalAmount[0] = orderTotalAmount[0].add(cartItem.getProductTotalPrice());
 
@@ -167,21 +168,29 @@ public class OrderServiceImpl implements OrderService {
                 Product product = Optional.ofNullable(productMapper.findProductByProductId(cartItem.getProductId(), ProductStatusEnum.ON_SALE.getValue()))
                         .orElseThrow(() -> new ProductException(ExceptionEnum.PRODUCT_DOES_NOT_EXIST));
 
+                Integer stock = product.getStock();
+
+                if (cartItem.getSpecifyId() != null) {
+                    stock = Optional.ofNullable(productSpecifyPriceStockMapper.getProductSpecifyPASBySpecifyId(product.getId(), cartItem.getSpecifyId()))
+                    .orElseThrow(() -> new ProductException(ExceptionEnum.PRODUCT_SPECIFY_DOES_EXIST)).getStock();
+                }
+                
                 // delete product stock
-                if (product.getStock() - cartItem.getQuantity() < 0)
+                if (stock - cartItem.getQuantity() < 0)
                     throw new ProductException(ExceptionEnum.PRODUCT_OUT_OF_STOCK);
 
                 log.info("Deleting product {} stock {} success", product.getName(), cartItem.getQuantity());
-                product.setStock(product.getStock() - cartItem.getQuantity());
+                product.setStock(stock - cartItem.getQuantity());
                 if (productMapper.updateByPrimaryKeySelective(product) != 1)
                     throw new ProductException(ExceptionEnum.PRODUCT_UPDATE_STOCK_ERROR);
 
-                if (cartMapper.deleteByUserIdAndProductId(userId, cartItem.getProductId()) != 1) {
+                if (cartMapper.deleteByUserIdAndProductIdAndSpecifyId(userId, cartItem.getProductId(), cartItem.getSpecifyId()) != 1) {
                     throw new CartException(ExceptionEnum.CART_CLEAN_ERROR);
                 }
                 log.info("Cleaning cart's product {} status {} success", product.getName(), product.getStatus());
             }
         });
+
 
         order.setPayment(orderTotalAmount[0]);
         //TODO Bulk insert
@@ -189,7 +198,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.insertSelective(order);
         log.info("Create order success");
 
-        return getOrderByOrderNo(userId, order.getOrderNo());
+        return payOrder(request, userId, order.getOrderNo());
     }
 
     @Override

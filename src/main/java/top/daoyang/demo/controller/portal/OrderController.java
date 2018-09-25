@@ -30,8 +30,9 @@ public class OrderController {
 
     @PostMapping("/{shippingId}")
     public ServerResponse createOrder(@AuthenticationPrincipal WXUserDetails userPrincipal,
-                                      @PathVariable Integer shippingId) {
-        return ServerResponse.createBySuccess(orderService.createOrder(userPrincipal.getId(), shippingId));
+                                      @PathVariable Integer shippingId,
+                                      HttpServletRequest request) throws IOException {
+        return ServerResponse.createBySuccess(orderService.createOrder(request, userPrincipal.getId(), shippingId));
     }
     @PostMapping("/pay/{orderNo}")
     public ServerResponse pay(HttpServletRequest httpRequest,

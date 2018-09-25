@@ -12,7 +12,7 @@ import java.text.ParseException;
 
 public interface OrderService {
 
-    OrderResponse createOrder(String id, Integer shippingId);
+    String createOrder(HttpServletRequest request, String id, Integer shippingId) throws IOException;
 
     OrderResponse getOrderByOrderNo(String userId, Long orderNo);
 
