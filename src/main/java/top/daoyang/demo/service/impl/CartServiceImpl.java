@@ -19,9 +19,9 @@ import top.daoyang.demo.payload.reponse.CartItemResponse;
 import top.daoyang.demo.payload.reponse.CartResponse;
 import top.daoyang.demo.payload.request.CartCreateRequest;
 import top.daoyang.demo.payload.request.CartDeleteRequest;
+import top.daoyang.demo.payload.request.CartSelectRequest;
 import top.daoyang.demo.payload.request.CartUpdateRequest;
 import top.daoyang.demo.service.CartService;
-import top.daoyang.demo.service.ProductService;
 import top.daoyang.demo.util.BigDecimalUtils;
 
 import java.math.BigDecimal;
@@ -193,9 +193,16 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponse selectCart(String userId, Integer productId, Integer isChecked) {
-        Cart cart = Optional.ofNullable(cartMapper.findByUserIdAndProductId(userId, productId))
-                .orElseThrow(() -> new CartException(ExceptionEnum.CART_DOES_NOT_EXIST));
+    public CartResponse selectCart(String userId, CartSelectRequest cartSelectRequest, Integer isChecked) {
+        Cart cart;
+
+        if (cartSelectRequest.getSpecifyId() != null) {
+            cart = Optional.ofNullable(cartMapper.findByUserIdAndProductIdAndSpecifyId(userId, cartSelectRequest.getProductId(), cartSelectRequest.getSpecifyId()))
+                    .orElseThrow(() -> new CartException(ExceptionEnum.CART_DOES_NOT_EXIST));
+        } else {
+            cart = Optional.ofNullable(cartMapper.findByUserIdAndProductId(userId, cartSelectRequest.getProductId()))
+                    .orElseThrow(() -> new CartException(ExceptionEnum.CART_DOES_NOT_EXIST));
+        }
 
         cart.setChecked(isChecked);
         if (cartMapper.updateByPrimaryKeySelective(cart) == 1) {

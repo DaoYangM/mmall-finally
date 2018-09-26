@@ -20,8 +20,9 @@ public interface ShippingMapper {
 
     List<Shipping> findByUserId(String userId);
 
-    int deleteByShippingIdAndUserId(@Param("userId") String userId,
-                                    @Param("shippingId") Integer shippingId);
+    int deletedByShippingIdAndUserId(@Param("userId") String userId,
+                                    @Param("shippingId") Integer shippingId,
+                                    @Param("deleted") Integer deleted);
 
     Shipping findShippingByUserId(@Param("userId")String userId,
                                   @Param("shippingId")Integer shippingId);
@@ -32,4 +33,7 @@ public interface ShippingMapper {
 
     int changeChecked(@Param("userId")String userId,
                       @Param("shippingId")Integer id);
+
+    int restoreShipping(@Param("userId")String userId,
+                        @Param("shippingId")Integer id);
 }

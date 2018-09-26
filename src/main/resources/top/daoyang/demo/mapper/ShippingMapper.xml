@@ -14,13 +14,14 @@
       <arg column="receiver_address" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="receiver_zip" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="checked" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="deleted" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_id, receiver_name, receiver_phone, receiver_mobile, receiver_province, receiver_city, 
-    receiver_district, receiver_address, receiver_zip, checked ,create_time, update_time
+    receiver_district, receiver_address, receiver_zip, checked , deleted, create_time, update_time
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -34,16 +35,17 @@
     delete from mmall_shipping
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" parameterType="top.daoyang.demo.entity.Shipping" >
     insert into mmall_shipping (id, user_id, receiver_name, 
       receiver_phone, receiver_mobile, receiver_province, 
       receiver_city, receiver_district, receiver_address, 
-      receiver_zip, create_time, update_time
+      receiver_zip, create_time, deleted, update_time
       )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{receiverName,jdbcType=VARCHAR},
       #{receiverPhone,jdbcType=VARCHAR}, #{receiverMobile,jdbcType=VARCHAR}, #{receiverProvince,jdbcType=VARCHAR}, 
       #{receiverCity,jdbcType=VARCHAR}, #{receiverDistrict,jdbcType=VARCHAR}, #{receiverAddress,jdbcType=VARCHAR}, 
-      #{receiverZip,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      #{receiverZip,jdbcType=VARCHAR}, (#{checked,jdbcType=INTEGER}, (#{deleted,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" parameterType="top.daoyang.demo.entity.Shipping"  useGeneratedKeys="true" keyProperty="id">
@@ -81,6 +83,9 @@
       </if>
       <if test="checked != null" >
         checked,
+      </if>
+      <if test="deleted != null" >
+        deleted,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -123,6 +128,9 @@
       <if test="checked != null" >
         #{checked,jdbcType=INTEGER},
       </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -164,6 +172,9 @@
       <if test="checked != null">
         checked = #{checked, jdbcType=INTEGER},
       </if>
+      <if test="deleted != null">
+        deleted = #{deleted, jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -184,6 +195,8 @@
       receiver_district = #{receiverDistrict,jdbcType=VARCHAR},
       receiver_address = #{receiverAddress,jdbcType=VARCHAR},
       receiver_zip = #{receiverZip,jdbcType=VARCHAR},
+      checked = #{checked,jdbcType=INTEGER},
+      deleted = #{deleted,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
@@ -218,13 +231,21 @@
     <include refid="Base_Column_List"/>
     FROM
     mmall_shipping
-    WHERE user_id = #{userId} AND checked = 1
+    WHERE user_id = #{userId} AND checked = 1 AND deleted = 0
   </select>
 
-  <delete id="deleteByShippingIdAndUserId" parameterType="map">
-    DELETE FROM
+  <update id="deletedByShippingIdAndUserId" parameterType="map">
+    UPDATE
     mmall_shipping
+    SET deleted = #{deleted}, checked = 0
     WHERE user_id = #{userId} AND id = #{shippingId}
-  </delete>
+  </update>
+
+  <update id="restoreShipping" parameterType="map">
+    UPDATE
+      mmall_shipping
+    SET deleted = 0, checked = 1
+    WHERE user_id = #{userId} AND id = #{shippingId}
+  </update>
 
 </mapper>

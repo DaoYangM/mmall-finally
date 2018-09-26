@@ -228,6 +228,7 @@
     </if>
     <include refid="searchChoose" />
   </select>
+
   <select id="findSearBarKeyWord" parameterType="map" resultType="java.lang.String">
     <bind name="pattern" value="'%' + _parameter.keyWord + '%'"/>
     SELECT subtitle

@@ -5,6 +5,5 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CartDeleteRequest extends CartRequest{
-
+public class CartSelectRequest extends CartRequest {
 }

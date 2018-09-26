@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import top.daoyang.demo.entity.Shipping;
 import top.daoyang.demo.enums.ExceptionEnum;
+import top.daoyang.demo.enums.ShippingStatusEnum;
 import top.daoyang.demo.exception.ShippingException;
 import top.daoyang.demo.mapper.ShippingMapper;
 import top.daoyang.demo.payload.request.ShippingCreateRequest;
@@ -30,6 +31,22 @@ public class ShippingServiceImpl implements ShippingService {
 
     @Override
     public Shipping createShipping(String userId, ShippingCreateRequest shippingCreateRequest) {
+        List<Shipping> shippingList = shippingMapper.findByUserId(userId);
+
+        for (Shipping shipping1 : shippingList) {
+            if (shipping1.getReceiverName().equals(shippingCreateRequest.getReceiverName()) &&
+                    shipping1.getReceiverPhone().equals(shippingCreateRequest.getReceiverPhone()) &&
+                    shipping1.getReceiverAddress().equals(shippingCreateRequest.getReceiverAddress())) {
+
+                shippingMapper.changeAllUncheck(userId);
+                if (shippingMapper.restoreShipping(userId, shipping1.getId()) == 1) {
+                    return shipping1;
+                } else {
+                    throw new ShippingException(ExceptionEnum.SHIPPING_UPDATE_ERROR);
+                }
+            }
+        }
+
         Shipping shipping = new Shipping();
         BeanUtils.copyProperties(shippingCreateRequest, shipping);
 
@@ -67,7 +84,7 @@ public class ShippingServiceImpl implements ShippingService {
                 }
             }
         }
-        return shippingMapper.deleteByShippingIdAndUserId(userId, shippingId) == 1;
+        return shippingMapper.deletedByShippingIdAndUserId(userId, shippingId, ShippingStatusEnum.DELETED.getCode()) == 1;
     }
 
     @Override

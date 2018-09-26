@@ -7,6 +7,7 @@ import top.daoyang.demo.enums.ProductStatusEnum;
 import top.daoyang.demo.payload.ServerResponse;
 import top.daoyang.demo.payload.request.CartCreateRequest;
 import top.daoyang.demo.payload.request.CartDeleteRequest;
+import top.daoyang.demo.payload.request.CartSelectRequest;
 import top.daoyang.demo.payload.request.CartUpdateRequest;
 import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.CartService;
@@ -53,16 +54,16 @@ public class CartController {
         return ServerResponse.createBySuccess(cartService.deleteCart(userPrincipal.getId(), cartDeleteRequest));
     }
 
-    @PutMapping("/select/{productId}")
+    @PutMapping("/select")
     public ServerResponse selectCart(@AuthenticationPrincipal WXUserDetails userPrincipal,
-                                     @PathVariable Integer productId) {
-        return ServerResponse.createBySuccess(cartService.selectCart(userPrincipal.getId(), productId, ProductStatusEnum.CHECKED.getValue()));
+                                     @Valid @RequestBody CartSelectRequest cartSelectRequest) {
+        return ServerResponse.createBySuccess(cartService.selectCart(userPrincipal.getId(), cartSelectRequest, ProductStatusEnum.CHECKED.getValue()));
     }
 
-    @PutMapping("/unselected/{productId}")
+    @PutMapping("/unselected")
     public ServerResponse unselectedCart(@AuthenticationPrincipal WXUserDetails userPrincipal,
-                                     @PathVariable Integer productId) {
-        return ServerResponse.createBySuccess(cartService.selectCart(userPrincipal.getId(), productId, ProductStatusEnum.UNCHECKED.getValue()));
+                                         @Valid @RequestBody CartSelectRequest cartSelectRequest) {
+        return ServerResponse.createBySuccess(cartService.selectCart(userPrincipal.getId(), cartSelectRequest, ProductStatusEnum.UNCHECKED.getValue()));
     }
 
     @PutMapping("/selects")

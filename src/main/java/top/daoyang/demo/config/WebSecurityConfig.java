@@ -3,6 +3,7 @@ package top.daoyang.demo.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.BeanIds;
@@ -73,6 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/products/**", "/order/pay/**", "/order/alipay/notify", "/wx/login", "/index")
                     .permitAll()
                 .antMatchers("/category/**")
+                    .permitAll()
+                .antMatchers("/comment/**")
                     .permitAll()
                 .antMatchers("/user/**").authenticated()
                 .anyRequest()

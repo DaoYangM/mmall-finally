@@ -259,7 +259,8 @@ public class OrderServiceImpl implements OrderService {
         PageHelper.startPage(page, size);
         List<Order> orderList = orderMapper.findOrderListByUserId(userId, payStatus);
         PageInfo pageInfo = new PageInfo<>(orderList);
-        List<OrderResponse> orderResponseList = orderList.stream().map(order -> getOrderByOrderNo(userId, order.getOrderNo())).collect(Collectors.toList());
+        List<OrderResponse> orderResponseList = orderList.stream()
+                .map(order -> getOrderByOrderNo(userId, order.getOrderNo())).collect(Collectors.toList());
         pageInfo.setList(orderResponseList);
 
         return pageInfo;
