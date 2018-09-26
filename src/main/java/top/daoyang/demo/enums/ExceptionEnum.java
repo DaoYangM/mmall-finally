@@ -74,9 +74,10 @@ public enum  ExceptionEnum {
     FAVORITE_CREATE_EXCEPTION("Favorite create exception", 1401),
     FAVORITE_DOES_NOT_EXIST("Favorite doesn't exist", 1402),
 
-    QRCODE_REXP_STADE_VALUE_ERROR("QRCode value is not 10000", 1501);
+    QRCODE_REXP_STADE_VALUE_ERROR("QRCode value is not 10000", 1501),
 
-
+    COMMENT_DOSE_NOT_EXIST("Comment doesn't exist", 1601),
+    COMMENT_CREATE_ERROR("Comment create error", 1002);
     private String msg;
     private int code;
 

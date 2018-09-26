@@ -1,8 +1,15 @@
 package top.daoyang.demo.service;
 
-import com.github.pagehelper.PageInfo;
+import top.daoyang.demo.entity.Comment;
+import top.daoyang.demo.payload.request.CommentCreateRequest;
 import top.daoyang.demo.tree.CommentTree;
+
+import javax.servlet.http.HttpServletRequest;
 
 public interface CommentService {
     CommentTree getCommentTreeByProductId(Integer productId);
+
+    boolean createCommentImg(HttpServletRequest request, String userId);
+
+    Comment createComment(String userId, CommentCreateRequest commentCreateRequest);
 }

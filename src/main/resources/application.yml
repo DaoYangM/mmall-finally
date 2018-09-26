@@ -40,7 +40,9 @@ app:
     username: ftpuser
     password: yedeyang
     uploadFold: /var/ftp/pub/alipayQRCode
-    responseFold: /alipayQRCode
+    uploadCIF: /var/ftp/pub/commentImg
+    responseFold: alipayQRCode
+    responseCIFold: commentImg
 
   qrCode:
     height:

@@ -1,15 +1,15 @@
 package top.daoyang.demo.controller.portal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import top.daoyang.demo.payload.ServerResponse;
+import top.daoyang.demo.payload.request.CommentCreateRequest;
+import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.CommentService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
@@ -25,14 +25,18 @@ public class CommentController {
     }
 
     @PostMapping
-    public ServerResponse createComment(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+    public ServerResponse createComment(@AuthenticationPrincipal WXUserDetails wxUserDetails,
+                                        @Valid @RequestBody CommentCreateRequest commentCreateRequest)  {
 
-        MultipartFile multipartFile = multipartHttpServletRequest.getFile("file");
-        String realPath = "D:/";
-        File dir = new File(realPath);
-        File file = new File(realPath, "aa.jpg");
-        multipartFile.transferTo(file);
-        return null;
+        return ServerResponse.createBySuccess(commentService.createComment(wxUserDetails.getId(), commentCreateRequest));
+    }
+
+
+    @PostMapping("/img")
+    public ServerResponse createComment(HttpServletRequest request,
+                                        @AuthenticationPrincipal WXUserDetails wxUserDetails) throws IOException {
+
+        return ServerResponse.createBySuccess(commentService.createCommentImg(request, wxUserDetails.getId()));
+
     }
 }
