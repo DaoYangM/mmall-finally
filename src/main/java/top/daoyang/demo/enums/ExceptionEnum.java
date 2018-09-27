@@ -77,7 +77,8 @@ public enum  ExceptionEnum {
     QRCODE_REXP_STADE_VALUE_ERROR("QRCode value is not 10000", 1501),
 
     COMMENT_DOSE_NOT_EXIST("Comment doesn't exist", 1601),
-    COMMENT_CREATE_ERROR("Comment create error", 1002);
+    COMMENT_CREATE_ERROR("Comment create error", 1602),
+    COMMENT_ORDER_CREATE_ERROR("Comment order create error", 1603);
     private String msg;
     private int code;
 

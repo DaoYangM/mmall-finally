@@ -5,6 +5,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import top.daoyang.demo.payload.ServerResponse;
 import top.daoyang.demo.payload.request.CommentCreateRequest;
+import top.daoyang.demo.payload.request.CommentOrderCreateRequest;
 import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.CommentService;
 
@@ -37,6 +38,11 @@ public class CommentController {
                                         @AuthenticationPrincipal WXUserDetails wxUserDetails) throws IOException {
 
         return ServerResponse.createBySuccess(commentService.createCommentImg(request, wxUserDetails.getId()));
+    }
 
+    @PostMapping("/order")
+    public ServerResponse createCommentOrder(@AuthenticationPrincipal WXUserDetails wxUserDetails,
+                                             @Valid @RequestBody CommentOrderCreateRequest commentOrderCreateRequest) {
+        return ServerResponse.createBySuccess(commentService.createCommentOrder(wxUserDetails, commentOrderCreateRequest));
     }
 }

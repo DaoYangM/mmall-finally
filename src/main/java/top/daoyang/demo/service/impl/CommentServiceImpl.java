@@ -11,11 +11,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import top.daoyang.demo.entity.Comment;
+import top.daoyang.demo.entity.CommentOrder;
 import top.daoyang.demo.enums.ExceptionEnum;
 import top.daoyang.demo.exception.CommentException;
 import top.daoyang.demo.mapper.CommentMapper;
-import top.daoyang.demo.payload.ServerResponse;
+import top.daoyang.demo.mapper.CommentOrderMapper;
 import top.daoyang.demo.payload.request.CommentCreateRequest;
+import top.daoyang.demo.payload.request.CommentOrderCreateRequest;
+import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.CommentService;
 import top.daoyang.demo.tree.CommentTree;
 import top.daoyang.demo.util.FtpUtils;
@@ -52,6 +55,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private CommentMapper commentMapper;
+
+    @Autowired
+    private CommentOrderMapper commentOrderMapper;
 
     @Override
     public CommentTree getCommentTreeByProductId(Integer productId) {
@@ -122,6 +128,19 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return comment;
+    }
+
+    @Override
+    public CommentOrder createCommentOrder(WXUserDetails wxUserDetails, CommentOrderCreateRequest commentOrderCreateRequest) {
+        CommentOrder commentOrder = new CommentOrder();
+        BeanUtils.copyProperties(commentOrderCreateRequest, commentOrder);
+        commentOrder.setUserId(wxUserDetails.getId());
+
+        if (commentOrderMapper.insertSelective(commentOrder) == 1) {
+            return commentOrder;
+        } else {
+            throw new CommentException(ExceptionEnum.COMMENT_ORDER_CREATE_ERROR);
+        }
     }
 
     public CommentTree getCommentTree(Integer productId, Integer pid) {
