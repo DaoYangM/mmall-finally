@@ -3,6 +3,7 @@ package top.daoyang.demo.service.impl;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -113,9 +114,8 @@ public class CommentServiceImpl implements CommentService {
     public Comment createComment(String userId, CommentCreateRequest commentCreateRequest) {
 
         Comment comment = new Comment();
+        BeanUtils.copyProperties(commentCreateRequest, comment);
         comment.setUserId(userId);
-        comment.setComment(commentCreateRequest.getComment());
-        comment.setProductId(commentCreateRequest.getProductId());
 
         if (commentMapper.insertSelective(comment) != 1) {
             throw new CommentException(ExceptionEnum.COMMENT_CREATE_ERROR);

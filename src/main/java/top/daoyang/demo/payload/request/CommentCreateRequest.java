@@ -11,4 +11,8 @@ public class CommentCreateRequest {
     private String comment;
 
     private Integer productId;
+
+    private Double star;
+
+    private String evaluate;
 }
