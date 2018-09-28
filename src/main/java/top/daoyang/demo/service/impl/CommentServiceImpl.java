@@ -175,18 +175,22 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
+    @Override
+    public CommentTree getCommentDetail(Integer commentId, Integer productId) {
+        return getCommentTree(productId, commentId);
+    }
+
     public CommentTree getCommentTree(Integer productId, Integer pid) {
         CommentTree commentTree0 = new CommentTree();
         if (pid != 0) {
             Comment comment1 = commentMapper.selectByPrimaryKey(pid);
             if (comment1 != null) {
-                commentTree0 = new CommentTree(comment1);
+                commentTree0 = new CommentTree(assembleCommentResponse(comment1));
             }
         }
         List<Comment> commentList = commentMapper.getCommentByPIDAndProductId(productId, pid);
         for (Comment comment : commentList) {
             commentTree0.getChild().add(getCommentTree(productId, comment.getId()));
-
         }
         return commentTree0;
     }
