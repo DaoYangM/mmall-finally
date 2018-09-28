@@ -73,22 +73,7 @@ public class CommentServiceImpl implements CommentService {
         PageHelper.startPage(page, size);
         List<Comment> commentList = commentMapper.getOutComment(productId);
 
-        List<CommentResponse> commentResponseList = commentList.stream().map(comment -> {
-            CommentResponse commentResponse = new CommentResponse();
-            BeanUtils.copyProperties(comment, commentResponse);
-            WxUser wxUser = Optional.ofNullable(wxUserMapper.getByOpenId(comment.getUserId()))
-                    .orElseThrow(() -> new UserNotFoundException(ExceptionEnum.USER_DOES_NOT_EXIST));
-            commentResponse.setNickName(wxUser.getNickName());
-            commentResponse.setAvatar(wxUser.getAvatar());
-
-            String commentImages = comment.getImage();
-            if (StringUtils.hasText(commentImages)) {
-                List<String> comImages = Arrays.asList(commentImages.split(","));
-                commentResponse.setCommentImages(comImages);
-            }
-
-            return commentResponse;
-        }).collect(Collectors.toList());
+        List<CommentResponse> commentResponseList = commentList.stream().map(comment -> assembleCommentResponse(comment)).collect(Collectors.toList());
         PageInfo pageInfo = new PageInfo<>(commentList);
         pageInfo.setList(commentResponseList);
 
@@ -174,6 +159,22 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
+    @Override
+    public CommentResponse upComment(String userId, Integer commentId) {
+        Comment comment = Optional.ofNullable(commentMapper.getCommentByUserIdAndCommentId(userId, commentId))
+                .orElseThrow(() -> new CommentException(ExceptionEnum.COMMENT_DOSE_NOT_EXIST));
+
+        if (comment.getUp() == null) {
+            comment.setUp(0);
+        }
+        comment.setUp(comment.getUp() + 1);
+        if (commentMapper.updateByPrimaryKeyWithBLOBs(comment) == 1) {
+            return assembleCommentResponse(comment);
+        } else {
+            throw new CommentException(ExceptionEnum.COMMENT_ORDER_CREATE_ERROR);
+        }
+    }
+
     public CommentTree getCommentTree(Integer productId, Integer pid) {
         CommentTree commentTree0 = new CommentTree();
         if (pid != 0) {
@@ -188,5 +189,22 @@ public class CommentServiceImpl implements CommentService {
 
         }
         return commentTree0;
+    }
+
+    private CommentResponse assembleCommentResponse(Comment comment) {
+        CommentResponse commentResponse = new CommentResponse();
+        BeanUtils.copyProperties(comment, commentResponse);
+        WxUser wxUser = Optional.ofNullable(wxUserMapper.getByOpenId(comment.getUserId()))
+                .orElseThrow(() -> new UserNotFoundException(ExceptionEnum.USER_DOES_NOT_EXIST));
+        commentResponse.setNickName(wxUser.getNickName());
+        commentResponse.setAvatar(wxUser.getAvatar());
+
+        String commentImages = comment.getImage();
+        if (StringUtils.hasText(commentImages)) {
+            List<String> comImages = Arrays.asList(commentImages.split(","));
+            commentResponse.setCommentImages(comImages);
+        }
+
+        return commentResponse;
     }
 }

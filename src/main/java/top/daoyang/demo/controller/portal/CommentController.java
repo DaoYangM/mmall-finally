@@ -47,4 +47,10 @@ public class CommentController {
                                              @Valid @RequestBody CommentOrderCreateRequest commentOrderCreateRequest) {
         return ServerResponse.createBySuccess(commentService.createCommentOrder(wxUserDetails, commentOrderCreateRequest));
     }
+
+    @PutMapping("/up/{commentId}")
+    public ServerResponse upComment(@AuthenticationPrincipal WXUserDetails wxUserDetails,
+                                    @PathVariable(value = "commentId") Integer commentId) {
+        return ServerResponse.createBySuccess(commentService.upComment(wxUserDetails.getId(), commentId));
+    }
 }
