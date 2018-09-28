@@ -21,8 +21,10 @@ public class CommentController {
     private CommentService commentService;
 
     @GetMapping("/{productId}")
-    public ServerResponse getComment(@PathVariable Integer productId) {
-        return ServerResponse.createBySuccess(commentService.getCommentTreeByProductId(productId));
+    public ServerResponse getComment(@PathVariable Integer productId,
+                                     @RequestParam(value = "page", defaultValue = "1") Integer page,
+                                     @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        return ServerResponse.createBySuccess(commentService.getCommentTreeByProductId(productId, page, size));
     }
 
     @PostMapping

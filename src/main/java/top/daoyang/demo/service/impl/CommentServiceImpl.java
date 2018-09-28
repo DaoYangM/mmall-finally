@@ -1,5 +1,7 @@
 package top.daoyang.demo.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +14,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import top.daoyang.demo.entity.Comment;
 import top.daoyang.demo.entity.CommentOrder;
+import top.daoyang.demo.entity.WxUser;
 import top.daoyang.demo.enums.ExceptionEnum;
 import top.daoyang.demo.exception.CommentException;
+import top.daoyang.demo.exception.UserNotFoundException;
 import top.daoyang.demo.mapper.CommentMapper;
 import top.daoyang.demo.mapper.CommentOrderMapper;
+import top.daoyang.demo.mapper.WxUserMapper;
+import top.daoyang.demo.payload.reponse.CommentResponse;
 import top.daoyang.demo.payload.request.CommentCreateRequest;
 import top.daoyang.demo.payload.request.CommentOrderCreateRequest;
 import top.daoyang.demo.security.WXUserDetails;
@@ -28,9 +34,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -59,9 +64,35 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private CommentOrderMapper commentOrderMapper;
 
+    @Autowired
+    private WxUserMapper wxUserMapper;
+
     @Override
-    public CommentTree getCommentTreeByProductId(Integer productId) {
-        return getCommentTree(productId, 0);
+    public PageInfo getCommentTreeByProductId(Integer productId, int page, int size) {
+//        return getCommentTree(productId, 0);
+        PageHelper.startPage(page, size);
+        List<Comment> commentList = commentMapper.getOutComment(productId);
+
+        List<CommentResponse> commentResponseList = commentList.stream().map(comment -> {
+            CommentResponse commentResponse = new CommentResponse();
+            BeanUtils.copyProperties(comment, commentResponse);
+            WxUser wxUser = Optional.ofNullable(wxUserMapper.getByOpenId(comment.getUserId()))
+                    .orElseThrow(() -> new UserNotFoundException(ExceptionEnum.USER_DOES_NOT_EXIST));
+            commentResponse.setNickName(wxUser.getNickName());
+            commentResponse.setAvatar(wxUser.getAvatar());
+
+            String commentImages = comment.getImage();
+            if (StringUtils.hasText(commentImages)) {
+                List<String> comImages = Arrays.asList(commentImages.split(","));
+                commentResponse.setCommentImages(comImages);
+            }
+
+            return commentResponse;
+        }).collect(Collectors.toList());
+        PageInfo pageInfo = new PageInfo<>(commentList);
+        pageInfo.setList(commentResponseList);
+
+        return pageInfo;
     }
 
     @Override
