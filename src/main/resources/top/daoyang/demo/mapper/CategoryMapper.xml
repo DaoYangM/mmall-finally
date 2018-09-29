@@ -18,11 +18,11 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from mmall_category
+    uFrom mmall_category
     where id = #{id,jdbcType=INTEGER}
   </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from mmall_category
+    delete uFrom mmall_category
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="top.daoyang.demo.entity.Category" >

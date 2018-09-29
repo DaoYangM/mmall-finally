@@ -14,14 +14,17 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import top.daoyang.demo.entity.Comment;
 import top.daoyang.demo.entity.CommentOrder;
+import top.daoyang.demo.entity.SubComment;
 import top.daoyang.demo.entity.WxUser;
 import top.daoyang.demo.enums.ExceptionEnum;
 import top.daoyang.demo.exception.CommentException;
 import top.daoyang.demo.exception.UserNotFoundException;
 import top.daoyang.demo.mapper.CommentMapper;
 import top.daoyang.demo.mapper.CommentOrderMapper;
+import top.daoyang.demo.mapper.SubCommentMapper;
 import top.daoyang.demo.mapper.WxUserMapper;
 import top.daoyang.demo.payload.reponse.CommentResponse;
+import top.daoyang.demo.payload.reponse.SubCommentResponse;
 import top.daoyang.demo.payload.request.CommentCreateRequest;
 import top.daoyang.demo.payload.request.CommentOrderCreateRequest;
 import top.daoyang.demo.security.WXUserDetails;
@@ -66,6 +69,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private WxUserMapper wxUserMapper;
+
+    @Autowired
+    private SubCommentMapper subCommentMapper;
 
     @Override
     public PageInfo getCommentTreeByProductId(Integer productId, int page, int size) {
@@ -176,8 +182,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentTree getCommentDetail(Integer commentId, Integer productId) {
-        return getCommentTree(productId, commentId);
+    public List<SubCommentResponse> getSubCommentDetail(Integer commentId) {
+        return subCommentMapper.getSubsByCommentId(commentId).stream()
+                .map(this::assembleSubCommentResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentResponse getCommentDetail(Integer commentId) {
+        return assembleCommentResponse(Optional.ofNullable(commentMapper.selectByPrimaryKey(commentId))
+                .orElseThrow(() -> new CommentException(ExceptionEnum.COMMENT_DOSE_NOT_EXIST)));
     }
 
     public CommentTree getCommentTree(Integer productId, Integer pid) {
@@ -210,5 +223,22 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return commentResponse;
+    }
+
+    private SubCommentResponse assembleSubCommentResponse(SubComment subComment) {
+        SubCommentResponse subCommentResponse = new SubCommentResponse();
+        BeanUtils.copyProperties(subComment, subCommentResponse);
+
+        WxUser fromUser = wxUserMapper.getByOpenId(subComment.getuFrom());
+        WxUser toUser = wxUserMapper.getByOpenId(subComment.getuTo());
+        if (toUser != null) {
+            subCommentResponse.setToNickName(toUser.getNickName());
+            subCommentResponse.setToAvatar(toUser.getAvatar());
+        }
+        subCommentResponse.setFromNickName(fromUser.getNickName());
+        subCommentResponse.setFromAvatar(fromUser.getAvatar());
+
+
+        return subCommentResponse;
     }
 }

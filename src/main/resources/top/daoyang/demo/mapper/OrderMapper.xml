@@ -26,12 +26,12 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from mmall_order
+    uFrom mmall_order
     where id = #{id,jdbcType=INTEGER}
   </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from mmall_order
+    delete uFrom mmall_order
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="top.daoyang.demo.entity.Order" >

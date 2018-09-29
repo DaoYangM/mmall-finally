@@ -10,7 +10,6 @@ import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.CommentService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Path;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -28,10 +27,14 @@ public class CommentController {
         return ServerResponse.createBySuccess(commentService.getCommentTreeByProductId(productId, page, size));
     }
 
-    @GetMapping("/detail/{commentId}/p/{productId}")
-    public ServerResponse detailComment(@PathVariable Integer commentId,
-                                        @PathVariable Integer productId) {
-        return ServerResponse.createBySuccess(commentService.getCommentDetail(commentId, productId));
+    @GetMapping("/detail/{commentId}")
+    public ServerResponse getCommentDetail(@PathVariable Integer commentId) {
+        return ServerResponse.createBySuccess(commentService.getCommentDetail(commentId));
+    }
+
+    @GetMapping("/sub/{commentId}")
+    public ServerResponse getSubComment(@PathVariable Integer commentId) {
+        return ServerResponse.createBySuccess(commentService.getSubCommentDetail(commentId));
     }
 
     @PostMapping
