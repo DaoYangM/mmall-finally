@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import top.daoyang.demo.payload.ServerResponse;
+import top.daoyang.demo.payload.reponse.SubCommentResponse;
 import top.daoyang.demo.payload.request.CommentCreateRequest;
 import top.daoyang.demo.payload.request.CommentOrderCreateRequest;
+import top.daoyang.demo.payload.request.SubCommentCreateRequest;
 import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.CommentService;
+import weixin.popular.bean.wxa.WxaDUserInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -35,6 +38,12 @@ public class CommentController {
     @GetMapping("/sub/{commentId}")
     public ServerResponse getSubComment(@PathVariable Integer commentId) {
         return ServerResponse.createBySuccess(commentService.getSubCommentDetail(commentId));
+    }
+
+    @PostMapping("/sub")
+    public ServerResponse createSubComment(@AuthenticationPrincipal WXUserDetails wxUserDetails,
+                                           @Valid @RequestBody SubCommentCreateRequest subCommentCreateRequest) {
+        return ServerResponse.createBySuccess(commentService.createSubComment(wxUserDetails.getId(), subCommentCreateRequest));
     }
 
     @PostMapping

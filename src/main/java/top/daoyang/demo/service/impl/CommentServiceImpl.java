@@ -27,6 +27,7 @@ import top.daoyang.demo.payload.reponse.CommentResponse;
 import top.daoyang.demo.payload.reponse.SubCommentResponse;
 import top.daoyang.demo.payload.request.CommentCreateRequest;
 import top.daoyang.demo.payload.request.CommentOrderCreateRequest;
+import top.daoyang.demo.payload.request.SubCommentCreateRequest;
 import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.CommentService;
 import top.daoyang.demo.tree.CommentTree;
@@ -191,6 +192,29 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponse getCommentDetail(Integer commentId) {
         return assembleCommentResponse(Optional.ofNullable(commentMapper.selectByPrimaryKey(commentId))
                 .orElseThrow(() -> new CommentException(ExceptionEnum.COMMENT_DOSE_NOT_EXIST)));
+    }
+
+    @Override
+    public List<SubCommentResponse> createSubComment(String userId, SubCommentCreateRequest subCommentCreateRequest) {
+        Optional.ofNullable(commentMapper.selectByPrimaryKey(subCommentCreateRequest.getCommentId()))
+                .orElseThrow(() -> new CommentException(ExceptionEnum.COMMENT_DOSE_NOT_EXIST));
+
+        SubComment newSubComment = new SubComment();
+        if (subCommentCreateRequest.getSubCommentId() != null) {
+            SubComment subComment = Optional.ofNullable(subCommentMapper.selectByPrimaryKey(subCommentCreateRequest.getSubCommentId()))
+                    .orElseThrow(() -> new CommentException(ExceptionEnum.COMMENT_DOSE_NOT_EXIST));
+            newSubComment.setuTo(subComment.getuFrom());
+
+        }
+        newSubComment.setCommentId(subCommentCreateRequest.getCommentId());
+        newSubComment.setuFrom(userId);
+        newSubComment.setContent(subCommentCreateRequest.getContent());
+
+        if (subCommentMapper.insertSelective(newSubComment) == 1) {
+            return getSubCommentDetail(subCommentCreateRequest.getCommentId());
+        } else {
+            throw new CommentException(ExceptionEnum.SUB_COMMENT_CREATE_ERROR);
+        }
     }
 
     public CommentTree getCommentTree(Integer productId, Integer pid) {

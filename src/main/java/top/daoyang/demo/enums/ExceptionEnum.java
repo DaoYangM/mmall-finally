@@ -79,7 +79,9 @@ public enum  ExceptionEnum {
     COMMENT_DOSE_NOT_EXIST("Comment doesn't exist", 1601),
     COMMENT_CREATE_ERROR("Comment create error", 1602),
     COMMENT_ORDER_CREATE_ERROR("Comment order create error", 1603),
-    COMMENT_UPDATE_UP_ERROR("Comment update up error", 1604);
+    COMMENT_UPDATE_UP_ERROR("Comment update up error", 1604),
+    SUB_COMMENT_DOSE_NOT_EXIST("Sub comment doesn't exist", 1605),
+    SUB_COMMENT_CREATE_ERROR("Sub commentt create error", 1606);
 
     private String msg;
     private int code;
