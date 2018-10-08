@@ -472,6 +472,24 @@ public class OrderServiceImpl implements OrderService {
          }
     }
 
+    @Override
+    public boolean confirmReceipt(String userId, Long orderNo) {
+
+        Order order = getOrderByOrderId(userId, orderNo);
+
+        if (order.getStatus() != OrderStatusEnum.PAID.getCode()) {
+            throw new OrderException(ExceptionEnum.ORDER_STATUS_ERROR);
+        }
+
+        order.setStatus(OrderStatusEnum.WAIT_COMMENT.getCode());
+
+        if (orderMapper.updateByPrimaryKeySelective(order) == 1) {
+            return true;
+        }
+
+        throw new OrderException(ExceptionEnum.ORDER_STATUS_UPDATE_ERROR);
+    }
+
     private Long generateOrderNumber() {
         Long currentTime = System.currentTimeMillis();
         return currentTime + new Random().nextInt(100);

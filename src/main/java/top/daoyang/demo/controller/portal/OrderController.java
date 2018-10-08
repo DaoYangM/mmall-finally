@@ -74,4 +74,10 @@ public class OrderController {
 
         return ServerResponse.createBySuccess(orderService.preCreateOrder(httpRequest, httpResponse, userDetails.getId(), preCreateOrderRequest));
     }
+
+    @PutMapping("/confirm/receipt/{orderNo}")
+    public ServerResponse confirmReceipt(@AuthenticationPrincipal WXUserDetails userDetails,
+                                         @PathVariable Long orderNo) {
+        return ServerResponse.createBySuccess(orderService.confirmReceipt(userDetails.getId(), orderNo));
+    }
 }

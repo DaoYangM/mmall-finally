@@ -4,13 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import top.daoyang.demo.payload.ServerResponse;
-import top.daoyang.demo.payload.reponse.SubCommentResponse;
 import top.daoyang.demo.payload.request.CommentCreateRequest;
 import top.daoyang.demo.payload.request.CommentOrderCreateRequest;
 import top.daoyang.demo.payload.request.SubCommentCreateRequest;
 import top.daoyang.demo.security.WXUserDetails;
 import top.daoyang.demo.service.CommentService;
-import weixin.popular.bean.wxa.WxaDUserInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -70,5 +68,10 @@ public class CommentController {
     public ServerResponse upComment(@AuthenticationPrincipal WXUserDetails wxUserDetails,
                                     @PathVariable(value = "commentId") Integer commentId) {
         return ServerResponse.createBySuccess(commentService.upComment(wxUserDetails.getId(), commentId));
+    }
+
+    @GetMapping("/product/index/{productId}")
+    public ServerResponse productIndex(@PathVariable Integer productId) {
+        return ServerResponse.createBySuccess(commentService.getProductIndex(productId));
     }
 }

@@ -3,6 +3,7 @@ package top.daoyang.demo.service;
 import com.github.pagehelper.PageInfo;
 import top.daoyang.demo.entity.Comment;
 import top.daoyang.demo.entity.CommentOrder;
+import top.daoyang.demo.payload.reponse.CommentProductIndexResponse;
 import top.daoyang.demo.payload.reponse.CommentResponse;
 import top.daoyang.demo.payload.reponse.SubCommentResponse;
 import top.daoyang.demo.payload.request.CommentCreateRequest;
@@ -29,4 +30,6 @@ public interface CommentService {
     CommentResponse getCommentDetail(Integer commentId);
 
     List<SubCommentResponse> createSubComment(String userId, SubCommentCreateRequest subCommentCreateRequest);
+
+    CommentProductIndexResponse getProductIndex(Integer productId);
 }

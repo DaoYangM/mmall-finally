@@ -23,6 +23,7 @@ import top.daoyang.demo.mapper.CommentMapper;
 import top.daoyang.demo.mapper.CommentOrderMapper;
 import top.daoyang.demo.mapper.SubCommentMapper;
 import top.daoyang.demo.mapper.WxUserMapper;
+import top.daoyang.demo.payload.reponse.CommentProductIndexResponse;
 import top.daoyang.demo.payload.reponse.CommentResponse;
 import top.daoyang.demo.payload.reponse.SubCommentResponse;
 import top.daoyang.demo.payload.request.CommentCreateRequest;
@@ -215,6 +216,20 @@ public class CommentServiceImpl implements CommentService {
         } else {
             throw new CommentException(ExceptionEnum.SUB_COMMENT_CREATE_ERROR);
         }
+    }
+
+    @Override
+    public CommentProductIndexResponse getProductIndex(Integer productId) {
+        CommentProductIndexResponse commentProductIndexResponse = new CommentProductIndexResponse();
+        commentProductIndexResponse.setCommentCount(commentMapper.getCommentTotalCountByProductId(productId));
+        Comment firstComment = commentMapper.getFirstCommentByProductId(productId);
+        if (firstComment != null) {
+            commentProductIndexResponse.setComment(assembleCommentResponse(firstComment));
+        } else {
+            commentProductIndexResponse.setComment(null);
+        }
+
+        return commentProductIndexResponse;
     }
 
     public CommentTree getCommentTree(Integer productId, Integer pid) {
