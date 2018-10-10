@@ -80,4 +80,10 @@ public class OrderController {
                                          @PathVariable Long orderNo) {
         return ServerResponse.createBySuccess(orderService.confirmReceipt(userDetails.getId(), orderNo));
     }
+
+    @PutMapping("/finished/{orderNo}")
+    public ServerResponse finishedOrder(@AuthenticationPrincipal WXUserDetails userDetails,
+                                        @PathVariable Long orderNo) {
+        return ServerResponse.createBySuccess(orderService.finishedOrder(userDetails.getId(), orderNo));
+    }
 }

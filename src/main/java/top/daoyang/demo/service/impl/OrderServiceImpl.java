@@ -490,6 +490,15 @@ public class OrderServiceImpl implements OrderService {
         throw new OrderException(ExceptionEnum.ORDER_STATUS_UPDATE_ERROR);
     }
 
+    @Override
+    public boolean finishedOrder(String userId, Long orderNo) {
+        Order order = orderMapper.findOrderByOrderNo(orderNo);
+        order.setStatus(OrderStatusEnum.ORDER_SUCCESS.getCode());
+        if (orderMapper.updateByPrimaryKeySelective(order) != 1)
+            throw new OrderException(ExceptionEnum.ORDER_STATUS_UPDATE_ERROR);
+        return true;
+    }
+
     private Long generateOrderNumber() {
         Long currentTime = System.currentTimeMillis();
         return currentTime + new Random().nextInt(100);

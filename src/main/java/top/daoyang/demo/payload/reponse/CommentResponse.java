@@ -13,5 +13,7 @@ public class CommentResponse extends Comment {
 
     private String avatar;
 
+    private Integer commentCount;
+
     private List<String> commentImages;
 }

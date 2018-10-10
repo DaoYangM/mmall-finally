@@ -27,4 +27,6 @@ public interface OrderService {
     String preCreateOrder(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String userId, PreCreateOrderRequest preCreateOrderRequest) throws IOException;
 
     boolean confirmReceipt(String userId, Long orderNo);
+
+    boolean finishedOrder(String userId, Long orderNo);
 }

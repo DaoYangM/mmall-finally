@@ -12,17 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import top.daoyang.demo.entity.Comment;
-import top.daoyang.demo.entity.CommentOrder;
-import top.daoyang.demo.entity.SubComment;
-import top.daoyang.demo.entity.WxUser;
+import top.daoyang.demo.entity.*;
 import top.daoyang.demo.enums.ExceptionEnum;
+import top.daoyang.demo.enums.OrderStatusEnum;
 import top.daoyang.demo.exception.CommentException;
+import top.daoyang.demo.exception.OrderException;
 import top.daoyang.demo.exception.UserNotFoundException;
-import top.daoyang.demo.mapper.CommentMapper;
-import top.daoyang.demo.mapper.CommentOrderMapper;
-import top.daoyang.demo.mapper.SubCommentMapper;
-import top.daoyang.demo.mapper.WxUserMapper;
+import top.daoyang.demo.mapper.*;
 import top.daoyang.demo.payload.reponse.CommentProductIndexResponse;
 import top.daoyang.demo.payload.reponse.CommentResponse;
 import top.daoyang.demo.payload.reponse.SubCommentResponse;
@@ -75,13 +71,16 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private SubCommentMapper subCommentMapper;
 
+    @Autowired
+    private OrderMapper orderMapper;
+
     @Override
     public PageInfo getCommentTreeByProductId(Integer productId, int page, int size) {
 //        return getCommentTree(productId, 0);
         PageHelper.startPage(page, size);
         List<Comment> commentList = commentMapper.getOutComment(productId);
 
-        List<CommentResponse> commentResponseList = commentList.stream().map(comment -> assembleCommentResponse(comment)).collect(Collectors.toList());
+        List<CommentResponse> commentResponseList = commentList.stream().map(this::assembleCommentResponse).collect(Collectors.toList());
         PageInfo pageInfo = new PageInfo<>(commentList);
         pageInfo.setList(commentResponseList);
 
@@ -254,7 +253,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new UserNotFoundException(ExceptionEnum.USER_DOES_NOT_EXIST));
         commentResponse.setNickName(wxUser.getNickName());
         commentResponse.setAvatar(wxUser.getAvatar());
-
+        commentResponse.setCommentCount(subCommentMapper.getSubCommentCountByCommentId(comment.getId()));
         String commentImages = comment.getImage();
         if (StringUtils.hasText(commentImages)) {
             List<String> comImages = Arrays.asList(commentImages.split(","));
